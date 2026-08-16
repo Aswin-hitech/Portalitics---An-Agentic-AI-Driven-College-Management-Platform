@@ -9,7 +9,7 @@ router = APIRouter(prefix="/admin")
 
 def _get_active_admin(request: Request):
     user = get_current_user_from_request(request)
-    if not user or user.get("role") != "admin":
+    if not user or user.get("role") not in {"admin", "principal"}:
         return None
     return user
 
@@ -30,6 +30,32 @@ async def admin_dashboard(request: Request):
             "dashboard": dashboard_data,
             "outcomes": outcomes,
             "page_title": "Executive Institutional Overview - Portalitics"
+        }
+    )
+
+@router.get("/principal/dashboard", response_class=HTMLResponse)
+async def principal_dashboard(request: Request):
+    user = _get_active_admin(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=303)
+    dashboard_data = mongo_client.get_principal_dashboard_data(user["id"])
+    return templates.TemplateResponse(
+        request=request,
+        name="admin/dashboard.html",
+        context={
+            "user": user,
+            "dashboard": {
+                "students_count": dashboard_data["total_students"],
+                "faculty_count": dashboard_data["total_faculty"],
+                "courses_count": dashboard_data["total_courses"]
+            },
+            "outcomes": {
+                "resolved_count": dashboard_data["resolved_interventions"],
+                "in_progress_count": dashboard_data["active_interventions"],
+                "overall_success_rate": dashboard_data["success_rate"],
+                "total_interventions": dashboard_data["resolved_interventions"] + dashboard_data["active_interventions"]
+            },
+            "page_title": "Principal Institutional Overview - Portalitics"
         }
     )
 

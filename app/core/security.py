@@ -67,3 +67,7 @@ def get_current_user_from_request(request: Request) -> Optional[Dict[str, Any]]:
                     return user
             return payload
     return None
+
+def user_can_access_role(user: Dict[str, Any], allowed_roles: set[str]) -> bool:
+    role = (user or {}).get("role")
+    return role in allowed_roles
