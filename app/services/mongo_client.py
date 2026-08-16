@@ -82,6 +82,15 @@ class MongoDBClient:
             d["id"] = str(d["_id"])
         return departments
 
+    def find_departments(self, query: str = "") -> List[Dict[str, Any]]:
+        if not query:
+            return self.get_all_departments()
+        regex = {"$regex": query, "$options": "i"}
+        departments = list(self.db.departments.find({"$or": [{"code": regex}, {"name": regex}] }))
+        for d in departments:
+            d["id"] = str(d["_id"])
+        return departments
+
     def get_timetables(self) -> List[Dict[str, Any]]:
         timetables = list(self.db.timetables.find({}))
         for t in timetables:
@@ -154,17 +163,27 @@ class MongoDBClient:
 
     def record_exam_mark(self, student_id: str, exam_id: str, exam_name: str, subject: str, score: float):
         uid = ObjectId(student_id) if isinstance(student_id, str) and len(student_id) == 24 else student_id
-        doc = {
-            "student_id": uid,
-            "exam_id": exam_id,
-            "exam_name": exam_name,
-            "subject_code": subject,
-            "score": score,
-            "grade": "A" if score >= 80 else "B" if score >= 65 else "C" if score >= 50 else "F",
-            "date": datetime.now().strftime("%Y-%m-%d"),
-            "created_at": datetime.utcnow()
+        grade = "A" if score >= 80 else "B" if score >= 65 else "C" if score >= 50 else "F"
+        update_doc = {
+            "$set": {
+                "student_id": uid,
+                "exam_id": exam_id,
+                "exam_name": exam_name,
+                "subject_code": subject,
+                "score": score,
+                "grade": grade,
+                "date": datetime.now().strftime("%Y-%m-%d"),
+                "updated_at": datetime.utcnow()
+            },
+            "$setOnInsert": {
+                "created_at": datetime.utcnow()
+            }
         }
-        self.db.results.insert_one(doc)
+        self.db.results.update_one(
+            {"student_id": uid, "subject_code": subject, "exam_name": exam_name},
+            update_doc,
+            upsert=True
+        )
 
     def get_faculty_support_queue(self, faculty_id: str) -> List[Dict[str, Any]]:
         fid = ObjectId(faculty_id) if isinstance(faculty_id, str) and len(faculty_id) == 24 else faculty_id
