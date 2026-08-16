@@ -1,29 +1,41 @@
 from fastapi import APIRouter, Request, Form
 from fastapi.responses import RedirectResponse
-from app.services.intervention_service import intervention_service
+from fastapi.responses import JSONResponse
 from app.core.security import get_current_user_from_request
+from app.services.intervention_service import intervention_service
 from app.agents.orchestrator import orchestrator
 from app.services.mongo_client import mongo_client
 from datetime import datetime, timedelta
 
 router = APIRouter(prefix="/api/interventions")
 
+def _can_modify_interventions(user):
+    return bool(user and user.get("role") in {"faculty", "hod", "principal", "admin"})
+
 @router.post("/update_status")
 async def update_status(
+    request: Request,
     margin_id: str = Form(...),
     status: str = Form(...),
     notes: str = Form("")
 ):
+    user = get_current_user_from_request(request)
+    if not _can_modify_interventions(user):
+        return JSONResponse({"status": "error", "message": "Unauthorized"}, status_code=403)
     intervention_service.update_intervention_status(margin_id, status, notes)
     return RedirectResponse(url=f"/faculty/intervention_details/{margin_id}", status_code=303)
 
 # Re-map legacy variable name for parameter compatibility
 @router.post("/update_status_legacy")
 async def update_status_legacy(
+    request: Request,
     intervention_id: str = Form(...),
     status: str = Form(...),
     notes: str = Form("")
 ):
+    user = get_current_user_from_request(request)
+    if not _can_modify_interventions(user):
+        return JSONResponse({"status": "error", "message": "Unauthorized"}, status_code=403)
     intervention_service.update_intervention_status(intervention_id, status, notes)
     return RedirectResponse(url=f"/faculty/intervention_details/{intervention_id}", status_code=303)
 
@@ -34,6 +46,8 @@ async def initiate_intervention(
     student_name: str = Form(...)
 ):
     user = get_current_user_from_request(request)
+    if not _can_modify_interventions(user):
+        return JSONResponse({"status": "error", "message": "Unauthorized"}, status_code=403)
     teacher_id = user["id"] if user else "tch_001"
     teacher_name = user["name"] if user else "Faculty Instructor"
 

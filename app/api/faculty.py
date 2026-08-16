@@ -26,6 +26,12 @@ def _get_active_faculty(request: Request):
         return None
     return user
 
+def _require_write_access(request: Request):
+    user = get_current_user_from_request(request)
+    if not user or user.get("role") not in ["faculty", "hod", "principal", "admin"]:
+        return None
+    return user
+
 @router.get("/dashboard", response_class=HTMLResponse)
 async def faculty_dashboard(request: Request):
     user = _get_active_faculty(request)
@@ -121,6 +127,9 @@ async def faculty_attendance(request: Request):
 
 @router.post("/attendance/mark")
 async def mark_attendance_submit(request: Request, student_id: str = Form(...), subject: str = Form(...), status: str = Form(...)):
+    user = _require_write_access(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=303)
     mongo_client.record_attendance(student_id, subject, status)
     orchestrator.route_event("attendance_updated", student_id, "faculty")
     return RedirectResponse(url="/faculty/attendance", status_code=303)
@@ -145,7 +154,9 @@ async def faculty_assignments(request: Request):
     )
 
 @router.post("/assignments/create")
-async def create_assignment_submit(title: str = Form(...), course: str = Form(...), due_date: str = Form(...)):
+async def create_assignment_submit(request: Request, title: str = Form(...), course: str = Form(...), due_date: str = Form(...)):
+    if not _require_write_access(request):
+        return RedirectResponse(url="/login", status_code=303)
     mongo_client.create_assignment({
         "assignment_id": f"ASG_{len(mongo_client.get_all_assignments())+1:03d}",
         "title": title,
@@ -174,7 +185,11 @@ async def faculty_exams(request: Request):
     )
 
 @router.post("/exams/record")
-async def record_exam_submit(student_id: str = Form(...), exam_name: str = Form(...), subject: str = Form(...), score: float = Form(...)):
+async def record_exam_submit(request: Request, student_id: str = Form(...), exam_name: str = Form(...), subject: str = Form(...), score: float = Form(...)):
+    if not _require_write_access(request):
+        return RedirectResponse(url="/login", status_code=303)
+    if score < 0 or score > 100:
+        return RedirectResponse(url="/faculty/exams", status_code=303)
     exam_id = f"EXM_{len(mongo_client.get_all_exams())+1:03d}"
     mongo_client.record_exam_mark(student_id, exam_id, exam_name, subject, score)
     orchestrator.route_event("exam_result_added", student_id, "faculty")

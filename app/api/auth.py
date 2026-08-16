@@ -12,7 +12,7 @@ async def login_page(request: Request, error: str = None):
     if user:
         role = user.get("role", "student")
         if role == "principal":
-            return RedirectResponse(url="/principal/dashboard", status_code=303)
+            return RedirectResponse(url="/admin/principal/dashboard", status_code=303)
         return RedirectResponse(url=f"/{role}/dashboard", status_code=303)
     return templates.TemplateResponse(
         request=request,
@@ -76,7 +76,7 @@ async def login_submit(request: Request, email: str = Form(...), password: str =
     elif role == "hod":
         redirect_url = "/faculty/hod-dashboard"
     elif role == "principal":
-        redirect_url = "/principal/dashboard"
+        redirect_url = "/admin/principal/dashboard"
     elif role == "admin":
         redirect_url = "/admin/dashboard"
     else:

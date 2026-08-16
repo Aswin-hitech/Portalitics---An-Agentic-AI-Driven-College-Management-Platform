@@ -591,7 +591,7 @@ class MongoDBClient:
             {
                 "_id": principal_id,
                 "user_id": "PIT-PRN-01",
-                "role": "admin",
+                "role": "principal",
                 "designation": "Principal",
                 "name": "Dr. Skinner",
                 "email": "principal@college.edu",
