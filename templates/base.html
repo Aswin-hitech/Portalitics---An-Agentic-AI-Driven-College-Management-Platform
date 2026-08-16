@@ -4,12 +4,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ page_title | default("PORTALITICS — Official Digital Campus Platform") }}</title>
+  {% if demo_mode %}
+  <meta name="portalitics-demo-mode" content="true">
+  {% endif %}
   <link rel="stylesheet" href="/static/css/base.css">
   <link rel="stylesheet" href="/static/css/dashboard.css">
   <!-- Chart.js Visualization Engine -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Lucide Icons (Monochrome, Thin, Professional) -->
   <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.js"></script>
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem("portalitics_sidebar_collapsed") === "true") {
+          document.documentElement.classList.add("sidebar-collapsed");
+        }
+      } catch (err) {}
+    })();
+  </script>
 </head>
 <body>
 
@@ -427,16 +439,16 @@
       <i data-lucide="user" class="nav-icon"></i>
       <span>More</span>
     </a>
-    {% elif user and user.role == 'teacher' %}
-    <a href="/teacher/dashboard" class="mobile-nav-item {% if 'dashboard' in request.url.path %}active{% endif %}">
+    {% elif user and user.role == 'faculty' %}
+    <a href="/faculty/dashboard" class="mobile-nav-item {% if 'dashboard' in request.url.path and 'hod' not in request.url.path %}active{% endif %}">
       <i data-lucide="layout-dashboard" class="nav-icon"></i>
       <span>Home</span>
     </a>
-    <a href="/teacher/classes" class="mobile-nav-item {% if 'classes' in request.url.path %}active{% endif %}">
+    <a href="/faculty/classes" class="mobile-nav-item {% if 'classes' in request.url.path %}active{% endif %}">
       <i data-lucide="presentation" class="nav-icon"></i>
       <span>Classes</span>
     </a>
-    <a href="/teacher/students" class="mobile-nav-item {% if 'students' in request.url.path %}active{% endif %}">
+    <a href="/faculty/students" class="mobile-nav-item {% if 'students' in request.url.path %}active{% endif %}">
       <i data-lucide="users" class="nav-icon"></i>
       <span>Students</span>
     </a>
@@ -444,7 +456,7 @@
       <i data-lucide="bell" class="nav-icon"></i>
       <span>Notices</span>
     </a>
-    <a href="/teacher/intervention_queue" class="mobile-nav-item {% if 'intervention' in request.url.path %}active{% endif %}">
+    <a href="/faculty/intervention_queue" class="mobile-nav-item {% if 'intervention' in request.url.path %}active{% endif %}">
       <i data-lucide="bar-chart-3" class="nav-icon"></i>
       <span>More</span>
     </a>

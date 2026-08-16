@@ -6,6 +6,23 @@ document.addEventListener('DOMContentLoaded', () => {
   initAdminCharts();
 });
 
+function setChartState(canvas, state, message) {
+  if (!canvas) return;
+  canvas.dataset.state = state;
+  const wrapper = canvas.closest('.chart-box');
+  if (!wrapper) return;
+  let status = wrapper.querySelector('.chart-state');
+  if (!status) {
+    status = document.createElement('div');
+    status.className = 'chart-state';
+    wrapper.appendChild(status);
+  }
+  status.textContent = message || '';
+  status.classList.toggle('is-loading', state === 'loading');
+  status.classList.toggle('is-error', state === 'error');
+  status.classList.toggle('is-empty', state === 'empty');
+}
+
 // --- Student Dashboard Charts ---
 async function initStudentCharts() {
   const attCanvas = document.getElementById('studentAttendanceChart');
@@ -16,8 +33,9 @@ async function initStudentCharts() {
   if (!attCanvas && !cgpaCanvas && !assignCanvas && !scatterCanvas) return;
 
   try {
+    [attCanvas, cgpaCanvas, assignCanvas, scatterCanvas].forEach((canvas) => setChartState(canvas, 'loading', 'Loading chart data...'));
     const res = await fetch('/student/api/charts');
-    if (!res.ok) return;
+    if (!res.ok) throw new Error('Unable to load student charts');
     const data = await res.json();
 
     if (attCanvas && data.attendance_trend) {
@@ -123,6 +141,7 @@ async function initStudentCharts() {
     }
   } catch (err) {
     console.error('Failed to load student chart data:', err);
+    [attCanvas, cgpaCanvas, assignCanvas, scatterCanvas].forEach((canvas) => setChartState(canvas, 'error', 'Chart data could not be loaded.'));
   }
 }
 
@@ -137,8 +156,9 @@ async function initFacultyCharts() {
   if (!attDistCanvas && !scoreDistCanvas && !supportPieCanvas && !interventionLineCanvas && !clusteredBarCanvas) return;
 
   try {
+    [attDistCanvas, scoreDistCanvas, supportPieCanvas, interventionLineCanvas, clusteredBarCanvas].forEach((canvas) => setChartState(canvas, 'loading', 'Loading chart data...'));
     const res = await fetch('/faculty/api/charts');
-    if (!res.ok) return;
+    if (!res.ok) throw new Error('Unable to load faculty charts');
     const data = await res.json();
 
     if (attDistCanvas && data.attendance_dist) {
@@ -245,6 +265,7 @@ async function initFacultyCharts() {
     }
   } catch (err) {
     console.error('Failed to load faculty chart data:', err);
+    [attDistCanvas, scoreDistCanvas, supportPieCanvas, interventionLineCanvas, clusteredBarCanvas].forEach((canvas) => setChartState(canvas, 'error', 'Chart data could not be loaded.'));
   }
 }
 
@@ -259,8 +280,9 @@ async function initAdminCharts() {
   if (!deptCanvas && !attDeptCanvas && !riskPieCanvas && !gpaAttScatterCanvas && !enrollPlacementClusteredCanvas) return;
 
   try {
+    [deptCanvas, attDeptCanvas, riskPieCanvas, gpaAttScatterCanvas, enrollPlacementClusteredCanvas].forEach((canvas) => setChartState(canvas, 'loading', 'Loading chart data...'));
     const res = await fetch('/admin/api/charts/dashboard');
-    if (!res.ok) return;
+    if (!res.ok) throw new Error('Unable to load admin charts');
     const data = await res.json();
 
     if (deptCanvas && data.department_students) {
@@ -375,5 +397,6 @@ async function initAdminCharts() {
     }
   } catch (err) {
     console.error('Failed to load admin chart data:', err);
+    [deptCanvas, attDeptCanvas, riskPieCanvas, gpaAttScatterCanvas, enrollPlacementClusteredCanvas].forEach((canvas) => setChartState(canvas, 'error', 'Chart data could not be loaded.'));
   }
 }

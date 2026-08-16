@@ -82,12 +82,15 @@ function initEvidenceDrawer() {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       drawerOverlay.classList.add('active');
+      const focusTarget = drawerOverlay.querySelector('button, a, input, textarea, select');
+      if (focusTarget) focusTarget.focus();
     });
   });
 
   if (closeBtn) {
     closeBtn.addEventListener('click', () => {
       drawerOverlay.classList.remove('active');
+      if (triggerBtns[0]) triggerBtns[0].focus();
     });
   }
 
@@ -107,12 +110,19 @@ function initNotificationDropdown() {
 
   bellBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    const isOpen = dropdown.style.display === 'block';
-    dropdown.style.display = isOpen ? 'none' : 'block';
+    const isOpen = dropdown.classList.toggle('active');
+    bellBtn.setAttribute('aria-expanded', String(isOpen));
+    if (isOpen) {
+      const firstItem = dropdown.querySelector('a, button, [tabindex]:not([tabindex="-1"])');
+      if (firstItem) firstItem.focus();
+    }
   });
 
-  document.addEventListener('click', () => {
-    if (dropdown) dropdown.style.display = 'none';
+  document.addEventListener('click', (e) => {
+    if (!dropdown.contains(e.target) && e.target !== bellBtn) {
+      dropdown.classList.remove('active');
+      bellBtn.setAttribute('aria-expanded', 'false');
+    }
   });
 }
 

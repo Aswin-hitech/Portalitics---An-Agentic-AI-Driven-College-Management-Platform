@@ -1,4 +1,5 @@
 import os
+import secrets
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import model_validator
 
@@ -32,17 +33,25 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def validate_secret_key(self) -> 'Settings':
-        # Exempt testing from production secret verification
-        if self.APP_ENV != "testing":
-            invalid_placeholders = [
-                "portalitics_secret_key_2026",
-                "portalitics_secret_key_change_in_production_2026"
-            ]
+        invalid_placeholders = {
+            "",
+            "portalitics_secret_key_2026",
+            "portalitics_secret_key_change_in_production_2026",
+            "<REPLACE_WITH_A_STRONG_RANDOM_HEX_KEY>",
+        }
+
+        # Production must fail closed if the secret is weak or missing.
+        if self.APP_ENV == "production":
             if not self.APP_SECRET_KEY or self.APP_SECRET_KEY.strip() in invalid_placeholders:
                 raise ValueError(
                     "Security Risk: APP_SECRET_KEY is missing or set to a default placeholder! "
                     "You must configure a strong key in your environment or .env file."
                 )
+            return self
+
+        # Development and testing should still boot even if the local .env is stale.
+        if not self.APP_SECRET_KEY or self.APP_SECRET_KEY.strip() in invalid_placeholders:
+            self.APP_SECRET_KEY = secrets.token_hex(32)
         return self
 
 settings = Settings()

@@ -92,7 +92,7 @@
 
       <form action="/api/interventions/update_status" method="POST">
         <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-        <input type="hidden" name="intervention_id" value="{{ item.id }}">
+        <input type="hidden" name="margin_id" value="{{ item.id }}">
 
         <div style="margin-bottom: 1rem;">
           <label style="font-weight: 600; font-size: 0.85rem; color: var(--text-dark);">Care Plan Status</label>

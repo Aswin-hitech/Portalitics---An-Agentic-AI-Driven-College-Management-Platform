@@ -12,6 +12,9 @@ class CSRFMiddleware(BaseHTTPMiddleware):
     """
     async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         cookie_token = request.cookies.get("csrf_token")
+        if not cookie_token:
+            cookie_token = secrets.token_hex(32)
+        request.state.csrf_token = cookie_token
         
         # Verify CSRF for state-changing forms
         if request.method in ["POST", "PUT", "DELETE"]:
@@ -35,18 +38,13 @@ class CSRFMiddleware(BaseHTTPMiddleware):
                 
         # Generate new token if not present in cookie
         response = await call_next(request)
-        if not cookie_token:
-            new_token = secrets.token_hex(32)
+        if "csrf_token" not in request.cookies:
             response.set_cookie(
                 "csrf_token",
-                new_token,
+                cookie_token,
                 httponly=True,
                 secure=True if request.url.scheme == "https" else False,
                 samesite="lax"
             )
-            # Store in request state so that the context processor can retrieve it
-            request.state.csrf_token = new_token
-        else:
-            request.state.csrf_token = cookie_token
             
         return response
