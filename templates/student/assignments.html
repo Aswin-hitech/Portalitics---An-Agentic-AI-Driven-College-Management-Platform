@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="user-banner">
+  <div>
+    <h1 class="user-greeting">My Coursework Submissions</h1>
+    <p class="user-subtext">Assignments, Homework & AI Feedback Log</p>
+  </div>
+</div>
+
+<div class="ed-card">
+  <div class="ed-table-container">
+    <table class="ed-table">
+      <thead>
+        <tr>
+          <th>Assignment Name</th>
+          <th>Due Date</th>
+          <th>Submission Status</th>
+          <th>Marks Score</th>
+          <th>AI Feedback Suggestion</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if dashboard.assignments %}
+        {% for a in dashboard.assignments %}
+        <tr>
+          <td><strong>{{ a.title }}</strong></td>
+          <td>{{ a.due_date }}</td>
+          <td>
+            {% if a.status == 'submitted' %}
+              <span style="color: #059669; font-weight: 600;">Submitted {% if a.is_late %}(Late Submission){% endif %}</span>
+            {% else %}
+              <span style="color: #DC2626; font-weight: 600;">Pending</span>
+            {% endif %}
+          </td>
+          <td><strong>{{ a.score if a.score else 'Awaiting Evaluation' }}</strong></td>
+          <td style="font-size: 0.85rem; color: var(--text-muted);">
+            {% if a.score and a.score >= 80 %}
+              Great step-by-step logic! Excellent execution.
+            {% elif a.score %}
+              Good effort! Review boundary conditions and proof formulas.
+            {% else %}
+              Please upload solution PDF before due time.
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr><td colspan="5" style="text-align: center;">No assignments found.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="portal-card" style="margin-top: 2rem;">
+  <div class="portal-card-header">
+    <h3>Submit Coursework Assignment Solution</h3>
+  </div>
+  
+  <form action="/student/assignments/submit" method="POST" style="display: flex; flex-direction: column; gap: 1rem; padding: 1.25rem;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <div>
+      <label for="assignment_id" style="font-size: 0.875rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.4rem; display: block;">Select Pending Assignment:</label>
+      <select name="assignment_id" id="assignment_id" style="width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-subtle); background: white; color: var(--text-dark);" required>
+        {% set has_pending = false %}
+        {% if dashboard.assignments %}
+          {% for a in dashboard.assignments %}
+            {% if a.status == 'pending' %}
+              <option value="{{ a.id }}">{{ a.title }} (Due: {{ a.due_date }})</option>
+              {% set has_pending = true %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+        {% if not has_pending %}
+          <option value="" disabled selected>No pending assignments left for submission</option>
+        {% endif %}
+      </select>
+    </div>
+    
+    <div>
+      <label for="submission_text" style="font-size: 0.875rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.4rem; display: block;">Submission Content / File Drive URL:</label>
+      <textarea name="submission_text" id="submission_text" rows="4" placeholder="Paste your submission essay, solution text, or shared Google Drive document link here..." style="width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-subtle); background: white; color: var(--text-dark);" required></textarea>
+    </div>
+    
+    <div style="display: flex; justify-content: flex-end;">
+      <button type="submit" class="btn-primary" {% if not has_pending %}disabled style="background: var(--text-muted); cursor: not-allowed;"{% endif %}>
+        Upload & Submit Coursework
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

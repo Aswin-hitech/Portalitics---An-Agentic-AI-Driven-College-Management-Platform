@@ -1,0 +1,37 @@
+# Python & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+*.egg-info/
+.eggs/
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Database & Storage Caches
+*.sqlite3
+*.db
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDEs & System Files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+
+# Application Output & Logs
+logs/
+*.log
+scratch/
+tmp/

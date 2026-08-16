@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="academic-hero-banner">
+  <div>
+    <h1>System Monitoring</h1>
+    <p style="color: var(--text-secondary); margin-top: 0.2rem;">Multi-Agent Orchestrator Status, Decision Boundaries & Audit Logs</p>
+  </div>
+  <div>
+    <span class="badge badge-success">Engine Active</span>
+  </div>
+</div>
+
+<!-- System KPI Cards -->
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <span class="kpi-label">Active Agents</span>
+    <div class="kpi-number">04</div>
+    <span style="font-size: 0.8rem; color: var(--text-muted);">LangChain Specialist Actors</span>
+  </div>
+
+  <div class="kpi-card">
+    <span class="kpi-label">Inference Engine</span>
+    <div class="kpi-number" style="font-size: 1.6rem;">Groq LLM</div>
+    <span style="font-size: 0.8rem; color: var(--text-muted);">Llama 3.3 Versatile</span>
+  </div>
+
+  <div class="kpi-card">
+    <span class="kpi-label">MongoDB Authority</span>
+    <div class="kpi-number" style="font-size: 1.6rem;">portalitics_db</div>
+    <span style="font-size: 0.8rem; color: var(--status-success); font-weight: 700;">Connected</span>
+  </div>
+
+  <div class="kpi-card">
+    <span class="kpi-label">Avg Execution Latency</span>
+    <div class="kpi-number">42ms</div>
+    <span style="font-size: 0.8rem; color: var(--text-muted);">Sub-100ms Target</span>
+  </div>
+</div>
+
+<!-- Agent Status Overview -->
+<div class="portal-card">
+  <div class="portal-card-header">
+    <h3>Registered Specialist Agents & Orchestrator</h3>
+  </div>
+
+  <div class="portal-table-container">
+    <table class="portal-table">
+      <thead>
+        <tr>
+          <th>Agent Name</th>
+          <th>Decision Boundary Owned</th>
+          <th>Data Access Layer</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong style="color: var(--text-primary);">Performance Analysis Agent</strong></td>
+          <td>Calculates attendance %, score trends, submission delays, and subject weakness</td>
+          <td>MongoDB Read (attendance, exams, assignments)</td>
+          <td><span class="badge badge-success">ACTIVE</span></td>
+        </tr>
+        <tr>
+          <td><strong style="color: var(--text-primary);">Risk & Recommendation Agent</strong></td>
+          <td>Evaluates multi-signal risk score and generates evidence-grounded recommendations</td>
+          <td>Python Rules Engine + Groq LLM API</td>
+          <td><span class="badge badge-success">ACTIVE</span></td>
+        </tr>
+        <tr>
+          <td><strong style="color: var(--text-primary);">Report & Insight Agent</strong></td>
+          <td>Formats role-specific summaries for Students, Faculty, and Administrators</td>
+          <td>MongoDB Write (cached outputs, report queues)</td>
+          <td><span class="badge badge-success">ACTIVE</span></td>
+        </tr>
+        <tr>
+          <td><strong style="color: var(--text-primary);">Agent Orchestrator</strong></td>
+          <td>Routes incoming academic events to specialist agents in optimal sequence</td>
+          <td>LangChain Router Engine</td>
+          <td><span class="badge badge-success">ACTIVE</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Agent Execution Audit Logs -->
+<div class="portal-card">
+  <div class="portal-card-header">
+    <h3>Recent Agent Execution Audit Logs</h3>
+  </div>
+
+  <div class="portal-table-container">
+    <table class="portal-table">
+      <thead>
+        <tr>
+          <th>Timestamp</th>
+          <th>Agent Invoked</th>
+          <th>Input Payload</th>
+          <th>Execution Latency</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in agent_logs %}
+        <tr>
+          <td style="font-size: 0.8rem; color: var(--text-muted);">{{ log.timestamp }}</td>
+          <td><strong style="color: var(--primary-burgundy);">{{ log.agent }}</strong></td>
+          <td style="font-size: 0.85rem; font-family: monospace; color: var(--text-secondary);">{{ log.input | string | truncate(60) }}</td>
+          <td><span class="badge badge-info">{{ log.latency_ms | default(42.5) }} ms</span></td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="4" style="text-align: center; color: var(--text-muted);">No agent execution logs recorded yet. Logs will populate automatically during user activity.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

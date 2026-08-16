@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="user-banner">
+  <div>
+    <h1 class="user-greeting">Master Student Directory</h1>
+    <p class="user-subtext">Institutional Enrollment & Student Management</p>
+  </div>
+</div>
+
+<!-- Add Student Form -->
+<div class="ed-card" style="margin-bottom: 2rem;">
+  <h3>Register New Student</h3>
+  <form action="/admin/students/add" method="POST" style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <div style="flex: 1; min-width: 200px;">
+      <input type="text" name="name" placeholder="Full Student Name" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--soft-red-border);" required>
+    </div>
+    <div style="flex: 1; min-width: 200px;">
+      <input type="email" name="email" placeholder="student.email@edusphere.edu" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--soft-red-border);" required>
+    </div>
+    <div style="flex: 1; min-width: 150px;">
+      <input type="text" name="department" value="Computer Science" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--soft-red-border);" required>
+    </div>
+    <button type="submit" class="btn-primary">Add Student →</button>
+  </form>
+</div>
+
+<!-- Student Table -->
+<div class="ed-card">
+  <div class="ed-table-container">
+    <table class="ed-table">
+      <thead>
+        <tr>
+          <th>Enrollment ID</th>
+          <th>Student Name</th>
+          <th>Institutional Email</th>
+          <th>Program / Section</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if dashboard.students %}
+        {% for std in dashboard.students %}
+        <tr>
+          <td>{{ std.enrollment_no }}</td>
+          <td><strong>{{ std.name }}</strong></td>
+          <td>{{ std.email }}</td>
+          <td>{{ std.course | default('N/A') }} (Sec {{ std.section | default('N/A') }})</td>
+          <td>
+            <a href="/reports/student/{{ std.id }}" target="_blank" class="btn-outline" style="font-size: 0.8rem; padding: 0.3rem 0.6rem;">Generate Growth Report</a>
+          </td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr><td colspan="5" style="text-align: center;">No students found.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

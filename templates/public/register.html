@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="max-width: 480px; margin: 3rem auto;">
+  <div class="ed-card">
+    <h2 style="text-align: center; margin-bottom: 0.5rem;">Create Your Account</h2>
+    <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Join Portalitics Proactive Learning Platform</p>
+
+    <form action="/register" method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <div style="margin-bottom: 1rem;">
+        <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-dark);">Full Name</label>
+        <input type="text" name="name" placeholder="e.g. Aarav Patel" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--soft-red-border); margin-top: 0.3rem;" required>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-dark);">Institutional Email</label>
+        <input type="email" name="email" placeholder="name@edusphere.edu" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--soft-red-border); margin-top: 0.3rem;" required>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-dark);">Password</label>
+        <input type="password" name="password" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--soft-red-border); margin-top: 0.3rem;" required>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-dark);">Account Role</label>
+        <select name="role" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--soft-red-border); margin-top: 0.3rem;" required>
+          <option value="student">Student</option>
+          <option value="teacher">Faculty / Teacher</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">Register Account →</button>
+    </form>
+
+    <div style="text-align: center; margin-top: 1.5rem;">
+      <p style="font-size: 0.85rem; color: var(--text-muted);">Already registered? <a href="/login" style="font-weight: 600;">Sign in here</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

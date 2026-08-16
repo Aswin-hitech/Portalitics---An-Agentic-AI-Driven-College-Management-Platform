@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="user-banner">
+  <div>
+    <h1 class="user-greeting">Curriculum Management</h1>
+    <p class="user-subtext">Active Departmental Courses</p>
+  </div>
+</div>
+
+<div class="grid-3">
+  {% if dashboard.courses %}
+  {% for course in dashboard.courses %}
+  <div class="ed-card">
+    <span class="badge-priority badge-monitor">{{ course.code }}</span>
+    <h3 style="margin: 0.75rem 0 0.25rem 0;">{{ course.title }}</h3>
+    <p style="color: var(--text-muted); font-size: 0.9rem;">Lead Instructor: {{ course.teacher }}</p>
+  </div>
+  {% endfor %}
+  {% else %}
+  <div class="ed-card" style="grid-column: 1 / -1; text-align: center;">
+    <p>No active courses found.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

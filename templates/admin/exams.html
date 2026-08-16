@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="user-banner">
+  <div>
+    <h1 class="user-greeting">Examination Master Records</h1>
+    <p class="user-subtext">Institutional Assessment Score Log</p>
+  </div>
+</div>
+
+<div class="ed-card">
+  <div class="ed-table-container">
+    <table class="ed-table">
+      <thead>
+        <tr>
+          <th>Assessment Name</th>
+          <th>Course</th>
+          <th>Date</th>
+          <th>Batch Average</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if exams %}
+        {% for exm in exams %}
+        <tr>
+          <td><strong>{{ exm.exam_name | default('N/A') }}</strong></td>
+          <td>{{ exm.subject | default('N/A') }}</td>
+          <td>{{ exm.recorded_at.strftime('%Y-%m-%d') if exm.recorded_at else 'N/A' }}</td>
+          <td>{{ exm.score | default('N/A') }} / 100</td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr><td colspan="4" style="text-align: center;">No exam records found.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

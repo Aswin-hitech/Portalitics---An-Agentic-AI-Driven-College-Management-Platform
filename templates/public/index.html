@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Official University Landing Hero -->
+<div style="background: var(--surface-white); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 4rem 3rem; box-shadow: var(--shadow-sm); margin-bottom: 3rem;">
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center;">
+
+    <div>
+      <span class="badge badge-info" style="margin-bottom: 1.25rem; padding: 0.35rem 1rem;">
+        ✦ OFFICIAL DIGITAL CAMPUS PLATFORM
+      </span>
+
+      <h1 style="font-size: 3.1rem; line-height: 1.15; margin-bottom: 1.25rem; color: var(--text-primary); letter-spacing: -0.03em;">
+        Portalitics College ERP
+      </h1>
+
+      <p style="font-size: 1.15rem; color: var(--text-secondary); margin-bottom: 2.25rem; max-width: 520px;">
+        Portalitics is an Agentic AI-driven academic management platform and student success system. Leveraging deterministic risk models and advanced LLM reasoning, Portalitics proactively monitors performance, identifies students requiring support, and generates evidence-grounded action plans to guarantee academic excellence.
+      </p>
+
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <a href="/login" class="btn-primary" style="font-size: 0.95rem; padding: 0.75rem 1.75rem;">Enter Portal →</a>
+        <a href="/explore" class="btn-outline" style="font-size: 0.95rem; padding: 0.75rem 1.75rem;">Explore Campus →</a>
+      </div>
+    </div>
+
+    <!-- Realistic Screenshot-Style Dashboard Preview Mockup -->
+    <div style="background: var(--bg-warm-white); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 1.25rem; box-shadow: var(--shadow-md);">
+      <div style="display: flex; align-items: center; gap: 0.4rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.65rem; margin-bottom: 1rem;">
+        <span style="width: 8px; height: 8px; background: #D5D2CF; border-radius: 50%;"></span>
+        <span style="width: 8px; height: 8px; background: #D5D2CF; border-radius: 50%;"></span>
+        <span style="width: 8px; height: 8px; background: #D5D2CF; border-radius: 50%;"></span>
+        <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: 0.4rem; font-family: monospace;">portalitics.edu / student / dashboard</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+        <div style="background: var(--surface-white); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.9rem;">
+          <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; display: block; margin-bottom: 0.25rem;">Current Academic Snapshot</span>
+          <strong style="font-size: 1.4rem; color: var(--text-primary);">CGPA 8.42 · Attendance 86%</strong>
+        </div>
+
+        <div style="background: var(--burgundy-subtle-bg); border: 1px solid var(--border-subtle); border-left: 4px solid var(--primary-burgundy); border-radius: 8px; padding: 0.9rem;">
+          <span style="font-size: 0.75rem; color: var(--primary-burgundy); text-transform: uppercase; letter-spacing: 0.06em; display: block; margin-bottom: 0.25rem;">✦ Academic Insight</span>
+          <strong style="font-size: 0.875rem; color: var(--text-primary);">"Mathematics score has improved by +12%"</strong>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Campus Content Sections -->
+<div style="margin-bottom: 4rem;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <h2>Featured Academic Courses</h2>
+    <a href="/courses" style="font-weight: 700; color: var(--primary-burgundy);">View All Courses →</a>
+  </div>
+
+  <div class="grid-3">
+    {% for course in courses %}
+    <div class="portal-card">
+      <span class="badge badge-info" style="margin-bottom: 0.75rem;">{{ course.code }}</span>
+      <h3 style="font-size: 1.15rem; margin-bottom: 0.4rem;">{{ course.title }}</h3>
+      <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1.15rem;">{{ course.description[:95] }}...</p>
+      <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 0.75rem;">
+        <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">{{ course.credits }} Credits</span>
+        <a href="/courses/{{ course.id }}" class="btn-outline" style="font-size: 0.8rem; padding: 0.3rem 0.75rem;">View Course →</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Top Teachers Section -->
+<div style="margin-bottom: 4rem;">
+  <div style="margin-bottom: 1.5rem;">
+    <h2>Distinguished Faculty & Instructors</h2>
+    <p style="color: var(--text-secondary); font-size: 0.95rem;">Learn from leading scholars and industry professionals at PIT.</p>
+  </div>
+
+  <div class="grid-4">
+    {% for t in teachers %}
+    <div class="portal-card" style="text-align: center; padding: 1.5rem 1rem;">
+      <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=256" alt="{{ t.name }}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin: 0 auto 1rem; border: 3px solid var(--soft-red-border);">
+      <h3 style="font-size: 1.05rem; margin-bottom: 0.25rem;">{{ t.name }}</h3>
+      <span class="badge badge-info" style="font-size: 0.75rem; margin-bottom: 0.5rem; display: inline-block;">{{ t.designation | default('Senior Faculty') }}</span>
+      <p style="color: var(--text-muted); font-size: 0.8rem; line-height: 1.4;">{{ t.department_name | default('Department of Computer Science') }}</p>
+    </div>
+    {% else %}
+    <div class="portal-card" style="text-align: center; padding: 1.5rem 1rem;">
+      <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=256" alt="Dr. Alan Turing" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin: 0 auto 1rem; border: 3px solid var(--soft-red-border);">
+      <h3 style="font-size: 1.05rem; margin-bottom: 0.25rem;">Dr. Alan Turing</h3>
+      <span class="badge badge-info" style="font-size: 0.75rem; margin-bottom: 0.5rem; display: inline-block;">HOD & Professor</span>
+      <p style="color: var(--text-muted); font-size: 0.8rem; line-height: 1.4;">Department of Computer Science</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- AI Study Tips Section -->
+<div style="margin-bottom: 3rem;">
+  <div style="margin-bottom: 1.5rem;">
+    <h2>AI-Powered Study Tips & Insights</h2>
+    <p style="color: var(--text-secondary); font-size: 0.95rem;">Empirical tips compiled by our performance agent to accelerate your learning.</p>
+  </div>
+
+  <div class="grid-3">
+    <div class="portal-card" style="border-top: 4px solid var(--primary-burgundy);">
+      <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+        <i data-lucide="brain" style="color: var(--primary-burgundy); width: 20px; height: 20px;"></i>
+        <h3 style="font-size: 1.1rem;">Spaced Repetition</h3>
+      </div>
+      <p style="color: var(--text-secondary); font-size: 0.875rem; line-height: 1.5;">Review difficult topics at increasing intervals (e.g., 1 day, 3 days, 7 days) to reinforce memory pathways before they decay.</p>
+    </div>
+
+    <div class="portal-card" style="border-top: 4px solid #10B981;">
+      <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+        <i data-lucide="clock" style="color: #10B981; width: 20px; height: 20px;"></i>
+        <h3 style="font-size: 1.1rem;">Consistent Attendance</h3>
+      </div>
+      <p style="color: var(--text-secondary); font-size: 0.875rem; line-height: 1.5;">Our data models show that students maintaining >90% classroom attendance achieve an average GPA that is 1.4 points higher than peers.</p>
+    </div>
+
+    <div class="portal-card" style="border-top: 4px solid #3B82F6;">
+      <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+        <i data-lucide="check-square" style="color: #3B82F6; width: 20px; height: 20px;"></i>
+        <h3 style="font-size: 1.1rem;">Active Retrieval Practice</h3>
+      </div>
+      <p style="color: var(--text-secondary); font-size: 0.875rem; line-height: 1.5;">Rather than passively re-reading slides, self-test with previous exam questions to force active recall of subject concepts.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

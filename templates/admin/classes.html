@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="user-banner">
+  <div>
+    <h1 class="user-greeting">Class Schedule & Sections</h1>
+    <p class="user-subtext">Active Class Roster Scheduling</p>
+  </div>
+</div>
+
+<div class="ed-card">
+  <div class="ed-table-container">
+    <table class="ed-table">
+      <thead>
+        <tr>
+          <th>Section Name</th>
+          <th>Course</th>
+          <th>Lead Faculty</th>
+          <th>Students Enrolled</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if dashboard.classes %}
+        {% for cls in dashboard.classes %}
+        <tr>
+          <td><strong>{{ cls.name }}</strong></td>
+          <td>{{ cls.course_name }}</td>
+          <td>{{ cls.teacher }}</td>
+          <td>{{ cls.total_students }} Students</td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr><td colspan="4" style="text-align: center;">No classes scheduled.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

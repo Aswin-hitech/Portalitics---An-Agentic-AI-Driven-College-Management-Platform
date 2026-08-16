@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+  <h1 style="font-size: 2.5rem; color: var(--text-white); margin-bottom: 0.5rem;">Official Campus Notices</h1>
+  <p style="color: var(--text-muted); font-size: 1.05rem;">Institutional circulars, examination schedules, and academic bulletins.</p>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 1.25rem;">
+  {% for notice in notices %}
+  <div class="portal-card" style="border-left: 4px solid var(--light-red); margin-bottom: 0;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+      <span class="badge badge-danger">{{ notice.category | default('Academic Circular') }}</span>
+      <span style="font-size: 0.85rem; color: var(--text-muted);">{{ notice.date }}</span>
+    </div>
+    <h3 style="font-size: 1.2rem; color: var(--text-white); margin-bottom: 0.4rem;">{{ notice.title }}</h3>
+    <p style="font-size: 0.925rem; color: var(--text-secondary);">{{ notice.content }}</p>
+  </div>
+  {% else %}
+  <div class="portal-card" style="text-align: center;">
+    <p style="color: var(--text-muted);">No administrative notices posted for today.</p>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

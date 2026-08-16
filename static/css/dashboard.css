@@ -1,0 +1,423 @@
+/* ==========================================================================
+   Dashboard Layouts & Editorial University Components
+   Enhanced with Premium Animations & Transitions
+   ========================================================================== */
+
+.grid-asymmetric-70 {
+  display: grid;
+  grid-template-columns: 2.2fr 1fr;
+  gap: 1.5rem;
+}
+
+.grid-equal-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  .grid-asymmetric-70, .grid-equal-2, .grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Official Academic Hero Banner */
+.academic-hero-banner {
+  background: var(--surface-white);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 1.75rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.75rem;
+  box-shadow: var(--shadow-sm);
+  animation: heroSlideIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle animated gradient border on hero */
+.academic-hero-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-burgundy), var(--secondary-burgundy), var(--primary-burgundy));
+  background-size: 200% 100%;
+  animation: gradientSlide 3s ease-in-out infinite;
+}
+
+@keyframes gradientSlide {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes heroSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.student-identity {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.student-identity h1 {
+  animation: textReveal 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+}
+
+@keyframes textReveal {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+    filter: blur(0);
+  }
+}
+
+.student-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary-burgundy);
+  animation: avatarPop 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+}
+
+@keyframes avatarPop {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Chart Canvas Container */
+.chart-box {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  margin-top: 0.5rem;
+  animation: chartFadeIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
+}
+
+@keyframes chartFadeIn {
+  from {
+    opacity: 0;
+    transform: scaleY(0.9);
+    transform-origin: bottom;
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+/* Academic Insight Card (Invisible AI Technology) */
+.academic-ai-card {
+  background: var(--surface-white);
+  border: 1px solid var(--border-subtle);
+  border-left: 4px solid var(--primary-burgundy);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.75rem;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Insight card animated left-border glow */
+.academic-ai-card::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--primary-burgundy);
+  box-shadow: 0 0 0 0 rgba(107, 30, 45, 0);
+  animation: insightPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes insightPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(107, 30, 45, 0); }
+  50% { box-shadow: 0 0 8px 2px rgba(107, 30, 45, 0.15); }
+}
+
+.academic-ai-card:hover {
+  box-shadow: 0 8px 24px -6px rgba(107, 30, 45, 0.1), 0 4px 8px -2px rgba(0, 0, 0, 0.04);
+  transform: translateY(-2px);
+  border-left-color: var(--dark-burgundy);
+}
+
+.ai-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.85rem;
+}
+
+.sparkle-badge {
+  font-size: 0.775rem;
+  font-weight: 800;
+  color: var(--primary-burgundy);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Sparkle animation */
+.sparkle-badge span:first-child {
+  display: inline-block;
+  animation: sparkleRotate 3s ease-in-out infinite;
+}
+
+@keyframes sparkleRotate {
+  0%, 100% { transform: rotate(0deg) scale(1); opacity: 1; }
+  25% { transform: rotate(15deg) scale(1.1); opacity: 0.8; }
+  50% { transform: rotate(0deg) scale(1.15); opacity: 1; }
+  75% { transform: rotate(-15deg) scale(1.1); opacity: 0.8; }
+}
+
+.why-pill-btn {
+  background: var(--burgundy-subtle-bg);
+  color: var(--primary-burgundy);
+  border: 1px solid var(--border-subtle);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.3rem 0.85rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.why-pill-btn:hover {
+  background: var(--primary-burgundy);
+  color: var(--surface-white);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px -2px rgba(107, 30, 45, 0.3);
+}
+
+.why-pill-btn:active {
+  transform: translateY(0);
+  transition-duration: 0.08s;
+}
+
+/* Subject Progress Bars */
+.academic-progress-track {
+  height: 8px;
+  background: var(--bg-soft-gray);
+  border-radius: 20px;
+  overflow: hidden;
+  margin-top: 0.35rem;
+}
+
+.academic-progress-fill {
+  height: 100%;
+  background: var(--primary-burgundy);
+  border-radius: 20px;
+  transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ==========================================================================
+   ENHANCED DASHBOARD MICRO-INTERACTIONS
+   ========================================================================== */
+
+/* --- KPI Grid Staggered Entrance --- */
+.kpi-grid {
+  perspective: 800px;
+}
+
+.kpi-grid .kpi-card {
+  animation: kpiCardEntrance 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.kpi-grid .kpi-card:nth-child(1) { animation-delay: 0.1s; }
+.kpi-grid .kpi-card:nth-child(2) { animation-delay: 0.18s; }
+.kpi-grid .kpi-card:nth-child(3) { animation-delay: 0.26s; }
+.kpi-grid .kpi-card:nth-child(4) { animation-delay: 0.34s; }
+
+@keyframes kpiCardEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* --- Grid Section Staggered Entrance --- */
+.grid-equal-2 > .portal-card,
+.grid-3 > div,
+.grid-asymmetric-70 > .portal-card {
+  animation: gridCardEntrance 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.grid-equal-2 > .portal-card:nth-child(1),
+.grid-3 > div:nth-child(1),
+.grid-asymmetric-70 > .portal-card:nth-child(1) { animation-delay: 0.15s; }
+
+.grid-equal-2 > .portal-card:nth-child(2),
+.grid-3 > div:nth-child(2),
+.grid-asymmetric-70 > .portal-card:nth-child(2) { animation-delay: 0.25s; }
+
+.grid-3 > div:nth-child(3) { animation-delay: 0.35s; }
+
+@keyframes gridCardEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Upcoming Card Item Stagger --- */
+.portal-card > div > div[style*="flex-direction: column"] > div {
+  animation: upcomingItemSlide 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.portal-card > div > div[style*="flex-direction: column"] > div:nth-child(1) { animation-delay: 0.2s; }
+.portal-card > div > div[style*="flex-direction: column"] > div:nth-child(2) { animation-delay: 0.3s; }
+.portal-card > div > div[style*="flex-direction: column"] > div:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes upcomingItemSlide {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* --- Table Row Stagger (first 8 rows) --- */
+.portal-table tbody tr {
+  animation: tableRowFade 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.portal-table tbody tr:nth-child(1) { animation-delay: 0.1s; }
+.portal-table tbody tr:nth-child(2) { animation-delay: 0.15s; }
+.portal-table tbody tr:nth-child(3) { animation-delay: 0.2s; }
+.portal-table tbody tr:nth-child(4) { animation-delay: 0.25s; }
+.portal-table tbody tr:nth-child(5) { animation-delay: 0.3s; }
+.portal-table tbody tr:nth-child(6) { animation-delay: 0.35s; }
+.portal-table tbody tr:nth-child(7) { animation-delay: 0.4s; }
+.portal-table tbody tr:nth-child(8) { animation-delay: 0.45s; }
+
+@keyframes tableRowFade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Academic Insight Card Entrance --- */
+.academic-ai-card {
+  animation: insightEntrance 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+}
+
+@keyframes insightEntrance {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+    filter: blur(0);
+  }
+}
+
+/* --- Support Outcome Stat Cards Hover --- */
+.grid-3 > div[style*="text-align: center"] {
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.grid-3 > div[style*="text-align: center"]:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 6px 16px -4px rgba(0, 0, 0, 0.08);
+}
+
+/* --- Chart Card Header Underline Reveal --- */
+.portal-card-header h3 {
+  position: relative;
+  display: inline-block;
+}
+
+.portal-card-header h3::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--primary-burgundy);
+  border-radius: 1px;
+  transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.portal-card:hover .portal-card-header h3::after {
+  width: 40px;
+}
+
+/* --- Respect prefers-reduced-motion --- */
+@media (prefers-reduced-motion: reduce) {
+  .academic-hero-banner,
+  .student-identity h1,
+  .student-avatar,
+  .chart-box,
+  .academic-ai-card,
+  .kpi-grid .kpi-card,
+  .grid-equal-2 > .portal-card,
+  .grid-3 > div,
+  .grid-asymmetric-70 > .portal-card,
+  .portal-table tbody tr {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}

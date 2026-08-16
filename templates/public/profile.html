@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="profile-banner">
+  <div class="profile-info">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+      <img src="{{ user.avatar }}" alt="User Avatar" class="profile-avatar">
+      <!-- Edit profile photo URL form -->
+      <form action="/{{ user.role }}/profile/update-avatar" method="POST" style="display: flex; gap: 0.25rem;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <input type="url" name="avatar_url" placeholder="New Photo URL..." style="padding: 0.25rem 0.5rem; font-size: 0.75rem; border-radius: 4px; border: 1px solid var(--soft-red-border); width: 130px;" required>
+        <button type="submit" class="btn-primary" style="font-size: 0.7rem; padding: 0.25rem 0.5rem;">Save</button>
+      </form>
+    </div>
+    <div>
+      <h1>{{ user.name }}</h1>
+      <p style="color: var(--text-muted); margin-top: 0.5rem;">
+        {% if user.role == 'student' %}
+          {{ user.program_name | default('N/A') }} • Roll No: {{ user.roll_number | default('N/A') }}
+        {% elif user.role in ['faculty', 'hod'] %}
+          {{ user.designation | default('Faculty Member') }} • {{ user.department_name | default('N/A') }}
+        {% else %}
+          System Administrator • Institutional Governance
+        {% endif %}
+      </p>
+    </div>
+  </div>
+  <div>
+    <span class="badge badge-success">Account Active</span>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="portal-card">
+    <div class="portal-card-header">
+      <h3>Account Details</h3>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+      <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;">
+        <span style="color: var(--text-muted);">Institutional Email</span>
+        <strong>{{ user.email }}</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;">
+        <span style="color: var(--text-muted);">User Role</span>
+        <strong style="text-transform: capitalize;">{{ user.role }}</strong>
+      </div>
+      {% if user.role == 'student' %}
+      <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;">
+        <span style="color: var(--text-muted);">Enrollment Number</span>
+        <strong>{{ user.enrollment_number | default('N/A') }}</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;">
+        <span style="color: var(--text-muted);">Phone Number</span>
+        <strong>{{ user.phone | default('N/A') }}</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between; padding-bottom: 0.5rem;">
+        <span style="color: var(--text-muted);">Guardian Name</span>
+        <strong>{{ user.guardian_name | default('N/A') }}</strong>
+      </div>
+      {% elif user.role in ['faculty', 'hod'] %}
+      <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;">
+        <span style="color: var(--text-muted);">Department</span>
+        <strong>{{ user.department_name | default('N/A') }}</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between; padding-bottom: 0.5rem;">
+        <span style="color: var(--text-muted);">Staff ID</span>
+        <strong>{{ user.id }}</strong>
+      </div>
+      {% else %}
+      <div style="display: flex; justify-content: space-between; padding-bottom: 0.5rem;">
+        <span style="color: var(--text-muted);">Administrator ID</span>
+        <strong>{{ user.id }}</strong>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if user.role == 'student' %}
+  <div class="portal-card">
+    <div class="portal-card-header">
+      <h3>Academic Standings</h3>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+      <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;">
+        <span style="color: var(--text-muted);">Cumulative CGPA</span>
+        <strong style="color: var(--primary-burgundy); font-size: 1.1rem;">{{ user.cgpa | default('N/A') }} / 10.0</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;">
+        <span style="color: var(--text-muted);">Active Backlogs</span>
+        <strong>{{ user.current_backlogs | default('0') }}</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between; padding-bottom: 0.5rem;">
+        <span style="color: var(--text-muted);">Semester / Section</span>
+        <strong>Semester {{ user.semester | default('N/A') }} (Section {{ user.section | default('N/A') }})</strong>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="portal-card">
+    <div class="portal-card-header">
+      <h3>System Privileges</h3>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+      <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;">
+        <span style="color: var(--text-muted);">Data Access Level</span>
+        <strong style="color: var(--primary-burgundy);">Full Read/Write</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between; padding-bottom: 0.5rem;">
+        <span style="color: var(--text-muted);">System Monitoring</span>
+        <span class="badge badge-success">Authorized</span>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

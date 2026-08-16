@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+  <h1 style="font-size: 2.5rem; color: var(--text-white); margin-bottom: 0.5rem;">Campus Events & Symposia</h1>
+  <p style="color: var(--text-muted); font-size: 1.05rem;">Technical hackathons, workshops, guest lectures, and department seminars.</p>
+</div>
+
+<div class="grid-equal-2">
+  {% for event in events %}
+  <div class="portal-card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem;">
+      <span class="badge badge-info">{{ event.category | default('Technical Workshop') }}</span>
+      <span style="font-size: 0.85rem; color: var(--light-red); font-weight: 700;">{{ event.date }}</span>
+    </div>
+    <h3 style="font-size: 1.25rem; color: var(--text-white); margin-bottom: 0.4rem;">{{ event.title }}</h3>
+    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.15rem;">{{ event.description }}</p>
+
+    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-secondary); border-top: 1px solid var(--border-white-subtle); padding-top: 0.85rem;">
+      <span>{{ event.venue | default('Auditorium Hall A') }}</span>
+      <span>{{ event.time | default('10:00 AM') }}</span>
+    </div>
+  </div>
+  {% else %}
+  <div class="portal-card" style="grid-column: 1 / -1; text-align: center;">
+    <p style="color: var(--text-muted);">No upcoming campus events scheduled at this moment.</p>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

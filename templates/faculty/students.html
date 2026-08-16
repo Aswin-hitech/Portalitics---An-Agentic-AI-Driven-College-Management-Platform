@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="user-banner">
+  <div>
+    <h1 class="user-greeting">Student Progress Roster</h1>
+    <p class="user-subtext">Section A Student Master Directory</p>
+  </div>
+</div>
+
+<div class="ed-card">
+  <div class="ed-table-container">
+    <table class="ed-table">
+      <thead>
+        <tr>
+          <th>Enrollment No</th>
+          <th>Student Name</th>
+          <th>Attendance Rate</th>
+          <th>Exam Average</th>
+          <th>Support Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if dashboard.students %}
+        {% for std in dashboard.students %}
+        <tr>
+          <td>{{ std.enrollment_no }}</td>
+          <td><strong>{{ std.name }}</strong></td>
+          <td><span style="color: {% if std.attendance < 75 %}#7A0C0C{% else %}#059669{% endif %}; font-weight: 700;">{{ std.attendance }}%</span></td>
+          <td><span style="color: {% if std.score < 60 %}#7A0C0C{% else %}#059669{% endif %}; font-weight: 700;">{{ std.score }} / 100</span></td>
+          <td>
+            {% if std.status == 'support_needed' %}
+            <span class="badge-priority badge-needs-attention">Support Recommended</span>
+            {% else %}
+            <span class="badge-priority badge-monitor">On Track</span>
+            {% endif %}
+          </td>
+          <td><a href="/faculty/intervention_details/{{ std.id }}" class="btn-outline" style="font-size: 0.8rem; padding: 0.3rem 0.6rem;">Open Support Plan</a></td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr><td colspan="6" style="text-align: center;">No students found.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

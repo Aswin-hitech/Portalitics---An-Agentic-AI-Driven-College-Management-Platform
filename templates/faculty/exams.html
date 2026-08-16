@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="user-banner">
+  <div>
+    <h1 class="user-greeting">Exam Marks & Assessment Entry</h1>
+    <p class="user-subtext">Record Test Scores & Trigger Multi-Signal Analysis</p>
+  </div>
+</div>
+
+<div class="ed-card">
+  <form action="/faculty/exams/record" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <div class="grid-3" style="margin-bottom: 1.5rem;">
+      <div>
+        <label style="font-weight: 600; font-size: 0.85rem;">Select Student</label>
+        <select name="student_id" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--soft-red-border); margin-top: 0.3rem;" required>
+          {% for std in students %}
+            <option value="{{ std.id }}">{{ std.name }} ({{ std.enrollment_no }})</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label style="font-weight: 600; font-size: 0.85rem;">Assessment Name</label>
+        <input type="text" name="exam_name" value="Mid-Term Assessment" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--soft-red-border); margin-top: 0.3rem;" required>
+      </div>
+      <div>
+        <label style="font-weight: 600; font-size: 0.85rem;">Subject Name</label>
+        <input type="text" name="subject" value="Mathematics" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--soft-red-border); margin-top: 0.3rem;" required>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 1.5rem; max-width: 300px;">
+      <label style="font-weight: 600; font-size: 0.85rem;">Score Obtained (out of 100)</label>
+      <input type="number" name="score" step="0.1" value="55.0" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--soft-red-border); margin-top: 0.3rem;" required>
+    </div>
+
+    <button type="submit" class="btn-primary">Record Marks & Run Support Engine →</button>
+  </form>
+</div>
+{% endblock %}

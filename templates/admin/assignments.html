@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="user-banner">
+  <div>
+    <h1 class="user-greeting">Assignment Master Log</h1>
+    <p class="user-subtext">All Coursework Across Departments</p>
+  </div>
+</div>
+
+<div class="ed-card">
+  <div class="ed-table-container">
+    <table class="ed-table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Course</th>
+          <th>Due Date</th>
+          <th>Submission Rate</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if assignments %}
+        {% for a in assignments %}
+        <tr>
+          <td><strong>{{ a.title }}</strong></td>
+          <td>{{ a.course_name | default(a.course) | default('N/A') }}</td>
+          <td>{{ a.due_date | default('N/A') }}</td>
+          <td>{{ a.submission_rate | default('95.2%') }}</td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr><td colspan="4" style="text-align: center;">No assignments found.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

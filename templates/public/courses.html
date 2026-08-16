@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="user-banner">
+  <div>
+    <h1 class="user-greeting">Academic Course Directory</h1>
+    <p class="user-subtext">Search & Explore Proactive AI-Enriched Courses</p>
+  </div>
+</div>
+
+<!-- Search & Category Filters -->
+<div class="ed-card" style="margin-bottom: 2rem;">
+  <form action="/courses" method="GET" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+    <div style="flex: 2; min-width: 250px;">
+      <input type="text" name="q" value="{{ search_query }}" placeholder="Search by course title, code (e.g. CS-201)..." style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--soft-red-border);">
+    </div>
+    <div style="flex: 1; min-width: 180px;">
+      <select name="category" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--soft-red-border);">
+        <option value="">All Categories</option>
+        <option value="Computer Science" {% if selected_category == 'Computer Science' %}selected{% endif %}>Computer Science</option>
+        <option value="Mathematics" {% if selected_category == 'Mathematics' %}selected{% endif %}>Mathematics</option>
+      </select>
+    </div>
+    <button type="submit" class="btn-primary">Search Courses →</button>
+  </form>
+</div>
+
+<!-- Course Listing Cards -->
+<div class="grid-3">
+  {% for course in courses %}
+  <div class="ed-card">
+    <span class="badge-priority badge-monitor">{{ course.code }}</span>
+    <h3 style="margin: 0.75rem 0 0.25rem 0;">{{ course.title }}</h3>
+    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">{{ course.description }}</p>
+    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 0.75rem;">
+      <span style="font-size: 0.85rem; color: var(--text-light);">{{ course.credits }} Credits</span>
+      <a href="/courses/{{ course.id }}" class="btn-primary" style="font-size: 0.8rem; padding: 0.3rem 0.8rem;">Course Details →</a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

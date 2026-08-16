@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="profile-banner">
+  <div>
+    <h1>Weekly Class Timetable</h1>
+    <p style="color: var(--text-muted);">Semester 4 • Section A (B.Tech Computer Science & Engineering)</p>
+  </div>
+</div>
+
+<div class="portal-card">
+  <div class="portal-table-container">
+    <table class="portal-table">
+      <thead>
+        <tr>
+          <th>Day</th>
+          <th>10:00 AM - 11:30 AM</th>
+          <th>11:45 AM - 01:15 PM</th>
+          <th>02:00 PM - 03:30 PM</th>
+          <th>03:45 PM - 05:15 PM</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if dashboard.timetable %}
+        {% for class in dashboard.timetable %}
+        <tr>
+          <td><strong>{{ class.day }}</strong></td>
+          <td>{{ class.slot1 }}</td>
+          <td>{{ class.slot2 }}</td>
+          <td>{{ class.slot3 }}</td>
+          <td>{{ class.slot4 }}</td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr>
+          <td colspan="5" style="text-align: center;">No timetable available.</td>
+        </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

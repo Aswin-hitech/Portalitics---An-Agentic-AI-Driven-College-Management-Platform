@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="user-banner">
+  <div>
+    <h1 class="user-greeting">Student Learning Support Queue</h1>
+    <p class="user-subtext">Multi-Signal Priority Queue (Impact × Urgency Filtered)</p>
+  </div>
+  <div style="display: flex; gap: 0.5rem;">
+    <button onclick="filterSupportQueue('ALL')" class="btn-outline" style="font-size: 0.8rem; padding: 0.3rem 0.75rem;">All</button>
+    <button onclick="filterSupportQueue('CRITICAL')" class="btn-outline" style="font-size: 0.8rem; padding: 0.3rem 0.75rem; border-color: #7A0C0C; color: #7A0C0C;">Immediate Attention</button>
+    <button onclick="filterSupportQueue('NEEDS_ATTENTION')" class="btn-outline" style="font-size: 0.8rem; padding: 0.3rem 0.75rem; border-color: #C81E1E; color: #C81E1E;">Support Recommended</button>
+  </div>
+</div>
+
+<div class="ed-card">
+  <div class="ed-table-container">
+    <table class="ed-table">
+      <thead>
+        <tr>
+          <th>Student & Course</th>
+          <th>Support Tier</th>
+          <th>Summary Observation</th>
+          <th>Evidence Signals</th>
+          <th>14-Day Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if dashboard.intervention_queue %}
+        {% for item in dashboard.intervention_queue %}
+        <tr class="support-queue-row" data-priority="{{ item.action_code }}">
+          <td>
+            <strong>{{ item.student_name }}</strong>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">{{ item.course_name }}</div>
+          </td>
+          <td>
+            <span class="badge-priority badge-needs-attention">
+              {{ item.priority_tier }}
+            </span>
+          </td>
+          <td style="font-size: 0.85rem; max-width: 250px;">
+            {{ item.observation | default('N/A') }}
+          </td>
+          <td style="font-size: 0.85rem;">
+            Attendance: {{ item.key_signals.attendance }}<br>
+            Exams: {{ item.key_signals.exam_trend }}
+          </td>
+          <td>
+            <span style="background: var(--light-red-bg); padding: 0.25rem 0.6rem; border-radius: 12px; font-size: 0.8rem; font-weight: 600; color: var(--primary-dark-red);">
+              {{ item.status }}
+            </span>
+          </td>
+          <td>
+            <a href="/faculty/intervention_details/{{ item.id }}" class="btn-primary" style="font-size: 0.8rem; padding: 0.35rem 0.75rem;">
+              Review Care Plan →
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr><td colspan="6" style="text-align: center;">No students in support queue.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/interventions.js"></script>
+{% endblock %}

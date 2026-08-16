@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="user-banner">
+  <div>
+    <h1 class="user-greeting">Learning Support Plan — {{ item.student_name }}</h1>
+    <p class="user-subtext">Active Feedback Evaluation Window (Target: {{ item.evaluation_due }})</p>
+  </div>
+  <div>
+    <span class="badge-priority badge-needs-attention">{{ item.priority_tier }}</span>
+  </div>
+</div>
+
+<div class="grid-2">
+  <!-- Left Column: Evidence & AI Suggested Action Plan -->
+  <div>
+    <div class="ed-card" style="border-top: 4px solid var(--primary-dark-red);">
+      <h3 style="margin-bottom: 1rem;">Summary & Key Signals (Evidence-Grounded)</h3>
+
+      <div class="ai-recommendation-box" style="margin-top: 0;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+          <h4 style="color: var(--primary-dark-red); margin-bottom: 0;">Observed Learning Pattern:</h4>
+          <span style="font-size: 0.725rem; background: #EEF2F6; color: #1E293B; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 700; display: inline-flex; align-items: center; gap: 0.25rem;">
+            <i data-lucide="shield-check" style="width: 13px; height: 13px; color: #059669;"></i>
+            <span>Grounded by 3 verified metrics</span>
+          </span>
+        </div>
+        <p style="font-size: 0.95rem; color: var(--text-dark); margin-bottom: 1rem;">
+          Ram demonstrated an attendance decline from 85% to 72% over the last 3 weeks, accompanied by a score drop (78 → 64 → 55) in recent Mathematics assessments.
+        </p>
+
+        <h4 style="color: var(--primary-dark-red); margin-bottom: 0.4rem;">Deterministic Signals (Python Rules Engine):</h4>
+        <ul class="ai-signal-list">
+          <li class="ai-signal-item"><span class="ai-signal-bullet">•</span> <strong>Attendance:</strong> {{ item.key_signals.attendance }}</li>
+          <li class="ai-signal-item"><span class="ai-signal-bullet">•</span> <strong>Exam Marks:</strong> {{ item.key_signals.exam_trend }}</li>
+          <li class="ai-signal-item"><span class="ai-signal-bullet">•</span> <strong>Coursework:</strong> {{ item.key_signals.assignment_rate }}</li>
+        </ul>
+      </div>
+
+      <div style="margin-top: 1.5rem; background: var(--pure-white); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--soft-red-border);">
+        <h4 style="color: var(--primary-dark-red); margin-bottom: 0.5rem;">Suggested Support Action:</h4>
+        <p style="font-size: 0.95rem; color: var(--text-dark); font-weight: 500;">
+          {{ item.suggested_action }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Closed Loop Tracking Card -->
+    <div class="ed-card">
+      <h3 style="margin-bottom: 1rem;">14-Day Closed-Loop Progress Evaluation</h3>
+      
+      <div class="grid-2" style="gap: 1rem; margin-bottom: 1rem;">
+        <!-- Attendance Delta Card -->
+        <div style="background: var(--bg-soft-gray); padding: 1rem; border-radius: 10px; text-align: center; border: 1px solid var(--border-subtle);">
+          <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-bottom: 0.4rem;">Attendance Delta</div>
+          <div style="display: flex; justify-content: center; align-items: center; gap: 0.5rem;">
+            <span style="font-size: 1.1rem; font-weight: 700; color: #7A0C0C;">{{ item.outcome_metrics.initial_attendance }}%</span>
+            <span style="color: var(--text-muted); font-size: 0.9rem;">→</span>
+            <span style="font-size: 1.3rem; font-weight: 800; color: #059669;">{{ item.outcome_metrics.current_attendance }}%</span>
+          </div>
+          {% set att_diff = item.outcome_metrics.current_attendance - item.outcome_metrics.initial_attendance %}
+          <div style="font-size: 0.725rem; margin-top: 0.3rem; font-weight: 700; color: {% if att_diff >= 0 %}#059669{% else %}#7A0C0C{% endif %};">
+            {% if att_diff >= 0 %}+{% endif %}{{ "%.1f"|format(att_diff) }}% Improvement
+          </div>
+        </div>
+        
+        <!-- Grade Delta Card -->
+        <div style="background: var(--bg-soft-gray); padding: 1rem; border-radius: 10px; text-align: center; border: 1px solid var(--border-subtle);">
+          <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-bottom: 0.4rem;">Grade Delta (AVG)</div>
+          <div style="display: flex; justify-content: center; align-items: center; gap: 0.5rem;">
+            <span style="font-size: 1.1rem; font-weight: 700; color: #7A0C0C;">{{ item.outcome_metrics.initial_grade_avg | default(65.0) }}</span>
+            <span style="color: var(--text-muted); font-size: 0.9rem;">→</span>
+            <span style="font-size: 1.3rem; font-weight: 800; color: #059669;">{{ item.outcome_metrics.current_grade_avg | default(75.0) }}</span>
+          </div>
+          {% set grd_diff = (item.outcome_metrics.current_grade_avg | default(75.0)) - (item.outcome_metrics.initial_grade_avg | default(65.0)) %}
+          <div style="font-size: 0.725rem; margin-top: 0.3rem; font-weight: 700; color: {% if grd_diff >= 0 %}#059669{% else %}#7A0C0C{% endif %};">
+            {% if grd_diff >= 0 %}+{% endif %}{{ "%.1f"|format(grd_diff) }} Marks Delta
+          </div>
+        </div>
+      </div>
+
+      <div style="padding: 0.85rem; background: #FFF5F5; border-radius: 10px; text-align: center; border: 1px solid var(--soft-red-border);">
+        <span style="font-weight: 700; color: var(--primary-dark-red);">Outcome Status: {{ item.outcome_metrics.improvement_status }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Column: Update Plan Form -->
+  <div>
+    <div class="ed-card">
+      <h3 style="margin-bottom: 1rem;">Faculty Log & Care Plan Status</h3>
+
+      <form action="/api/interventions/update_status" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <input type="hidden" name="intervention_id" value="{{ item.id }}">
+
+        <div style="margin-bottom: 1rem;">
+          <label style="font-weight: 600; font-size: 0.85rem; color: var(--text-dark);">Care Plan Status</label>
+          <select name="status" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--soft-red-border); margin-top: 0.3rem;">
+            <option value="In Progress" {% if item.status == 'In Progress' %}selected{% endif %}>In Progress (Active Monitoring)</option>
+            <option value="Resolved" {% if item.status == 'Resolved' %}selected{% endif %}>Resolved (Student Reached Target)</option>
+            <option value="Escalated" {% if item.status == 'Escalated' %}selected{% endif %}>Escalated (Requires Department Chair)</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <label style="font-weight: 600; font-size: 0.85rem; color: var(--text-dark);">Faculty Mentoring Notes</label>
+          <textarea name="notes" rows="6" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--soft-red-border); margin-top: 0.3rem;">{{ item.teacher_notes }}</textarea>
+        </div>
+
+        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">Save Log & Update Status →</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

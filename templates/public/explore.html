@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Explore Campus Header -->
+<div style="background: var(--grad-hero); border: 1px solid var(--border-red-subtle); border-radius: 20px; padding: 3.5rem 2.5rem; margin-bottom: 2.5rem; text-align: center; box-shadow: var(--glow-hover);">
+  <div style="max-width: 780px; margin: 0 auto;">
+    <span class="badge badge-info" style="margin-bottom: 1rem; padding: 0.35rem 1rem;">
+      ✦ INSTITUTIONAL DISCOVERY HUB
+    </span>
+    <h1 style="font-size: 2.75rem; color: var(--text-white); margin-bottom: 1rem;">
+      Explore Campus
+    </h1>
+    <p style="font-size: 1.15rem; color: var(--text-secondary); margin-bottom: 2rem;">
+      Discover courses, departments, academic events, notices, and student support resources across Portalitics.
+    </p>
+
+    <!-- Large Rounded Search Bar -->
+    <div style="display: flex; align-items: center; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-red-subtle); border-radius: 30px; padding: 0.6rem 1.25rem; width: 100%; max-width: 620px; margin: 0 auto; box-shadow: var(--glow-subtle);">
+      <i data-lucide="search" style="width: 18px; height: 18px; stroke-width: 1.7; color: var(--text-muted); margin-right: 0.75rem;"></i>
+      <input type="text" placeholder="Search courses, faculty, events, notices..." style="background: transparent; border: none; outline: none; color: var(--text-white); font-size: 1rem; width: 100%;" id="exploreSearchInput">
+      <span class="kbd-shortcut" style="margin-left: 0.5rem;">Ctrl K</span>
+    </div>
+  </div>
+</div>
+
+<!-- Categorized Discovery Hub -->
+<div style="margin-bottom: 3rem;">
+  <div style="display: flex; gap: 0.75rem; overflow-x: auto; padding-bottom: 0.75rem; margin-bottom: 2rem;">
+    <a href="/explore" class="btn-primary" style="font-size: 0.85rem; padding: 0.45rem 1.15rem; border-radius: 20px;">ALL DISCOVERY</a>
+    <a href="/courses" class="btn-outline" style="font-size: 0.85rem; padding: 0.45rem 1.15rem; border-radius: 20px;">ACADEMICS</a>
+    <a href="/departments" class="btn-outline" style="font-size: 0.85rem; padding: 0.45rem 1.15rem; border-radius: 20px;">DEPARTMENTS</a>
+    <a href="/events" class="btn-outline" style="font-size: 0.85rem; padding: 0.45rem 1.15rem; border-radius: 20px;">CAMPUS EVENTS</a>
+    <a href="/notices" class="btn-outline" style="font-size: 0.85rem; padding: 0.45rem 1.15rem; border-radius: 20px;">NOTICES</a>
+  </div>
+
+  <!-- Academic Courses Section -->
+  <div style="margin-bottom: 2.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+      <h2 style="font-size: 1.5rem;">Academic Courses</h2>
+      <a href="/courses" style="font-size: 0.85rem; font-weight: 700; color: var(--light-red);">View Catalog →</a>
+    </div>
+
+    <div class="grid-3">
+      {% for course in courses %}
+      <div class="portal-card">
+        <span class="badge badge-info" style="margin-bottom: 0.75rem;">{{ course.code }}</span>
+        <h3 style="font-size: 1.15rem; margin-bottom: 0.4rem; color: var(--text-white);">{{ course.title }}</h3>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.15rem;">{{ course.description[:90] }}...</p>
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-white-subtle); padding-top: 0.75rem;">
+          <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">{{ course.credits }} Credits</span>
+          <a href="/courses/{{ course.id }}" style="font-size: 0.85rem; font-weight: 700; color: var(--light-red);">VIEW COURSE →</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Campus Notices Section -->
+  <div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+      <h2 style="font-size: 1.5rem;">Official Notices</h2>
+      <a href="/notices" style="font-size: 0.85rem; font-weight: 700; color: var(--light-red);">View All Notices →</a>
+    </div>
+
+    <div class="grid-equal-2">
+      {% for notice in notices %}
+      <div class="portal-card" style="border-left: 4px solid var(--light-red);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <span class="badge badge-danger" style="font-size: 0.75rem;">{{ notice.category | default('Academic Alert') }}</span>
+          <span style="font-size: 0.8rem; color: var(--text-muted);">{{ notice.date }}</span>
+        </div>
+        <h3 style="font-size: 1.1rem; color: var(--text-white); margin-bottom: 0.35rem;">{{ notice.title }}</h3>
+        <p style="font-size: 0.875rem; color: var(--text-secondary);">{{ notice.content[:110] }}...</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

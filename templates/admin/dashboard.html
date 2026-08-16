@@ -1,0 +1,304 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Executive Academic Banner -->
+<div class="academic-hero-banner">
+  <div class="student-identity">
+    <img src="{{ user.avatar }}" alt="Admin Avatar" class="student-avatar">
+    <div>
+      <h1>College Overview</h1>
+      <p style="color: var(--text-secondary); margin-top: 0.2rem;">
+        Institutional Governance · {{ user.name }} ({{ user.title | default('N/A') }})
+      </p>
+    </div>
+  </div>
+  <div>
+    <a href="/reports/institution" target="_blank" class="btn-primary">Generate Executive Board Report</a>
+  </div>
+</div>
+
+<!-- ✦ AI ASSIST — Agentic Institutional Command Center -->
+<div class="portal-card" style="background: linear-gradient(135deg, #FFF9FA 0%, #FFFFFF 100%); border-left: 5px solid var(--primary-burgundy); margin-bottom: 2rem; margin-top: 1.5rem;">
+  <div class="portal-card-header" style="align-items: flex-start; flex-direction: column; gap: 0.25rem;">
+    <div class="sparkle-badge" style="background: rgba(107, 30, 45, 0.08); color: var(--primary-burgundy); font-weight: 700;">
+      <span>✦</span>
+      <span>AI ASSIST COMMAND CENTER</span>
+    </div>
+    <h3 style="font-size: 1.25rem; color: var(--text-primary); margin-top: 0.5rem; margin-bottom: 0.25rem;">Agentic Institutional Command Interface</h3>
+    <p style="font-size: 0.875rem; color: var(--text-secondary); line-height: 1.45;">
+      Interact directly with the college management database using normal language. Authorized staff can search data, filter metrics, or perform validated operations (e.g. updating student grades) with automatic execution plan generation and institutional audit logging.
+    </p>
+  </div>
+
+  <div style="padding: 1.25rem; background: var(--bg-soft-gray); border-radius: 8px; margin-top: 1rem; border: 1px solid var(--border-subtle);">
+    <form id="ai-assist-form" onsubmit="executeAICommand(event)" style="display: flex; gap: 0.75rem; margin-top: 0;">
+      <input type="text" id="ai-assist-input" placeholder="Type an administrative instruction or query..." style="flex: 1; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid var(--border-subtle); font-size: 0.9rem;" required>
+      <button type="submit" class="btn-primary" style="background: var(--primary-burgundy); padding: 0.75rem 1.5rem; font-weight: 700; border-radius: 8px; font-size: 0.9rem; display: flex; align-items: center; gap: 0.4rem;">
+        <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i>
+        <span>Execute Command</span>
+      </button>
+    </form>
+  </div>
+
+  <!-- AI Response Section -->
+  <div id="ai-assist-results" style="display: none; padding: 1.25rem; margin-top: 1.25rem; border-radius: 8px; background: white; border: 1px solid var(--border-subtle);">
+    <h4 style="font-size: 0.9rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--primary-burgundy); display: flex; align-items: center; gap: 0.4rem;">
+      <i data-lucide="terminal" style="width: 16px; height: 16px;"></i>
+      <span>Execution Plan & Audit Log</span>
+    </h4>
+    
+    <!-- Step Trace -->
+    <div style="margin-bottom: 1rem;">
+      <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 0.35rem;">Execution Plan Trace:</div>
+      <ol id="ai-plan-trace" style="font-size: 0.825rem; color: var(--text-secondary); padding-left: 1.2rem; margin: 0; line-height: 1.5;"></ol>
+    </div>
+
+    <!-- Output Status and Results -->
+    <div style="margin-bottom: 1rem; padding: 0.75rem; border-radius: 6px; font-size: 0.85rem;" id="ai-output-status"></div>
+    
+    <!-- Rendered Data Tables -->
+    <div id="ai-output-data" style="margin-bottom: 1rem; overflow-x: auto;"></div>
+
+    <!-- Permanent Audit Log -->
+    <div id="ai-audit-log" style="display: none; padding: 0.75rem; background: #F8FAF9; border: 1px solid #D1FAE5; border-radius: 6px; font-size: 0.8rem; color: #065F46;">
+      <strong>✓ Secure Audit Log Generated:</strong>
+      <div id="ai-audit-log-details" style="font-family: monospace; margin-top: 0.25rem; font-size: 0.75rem;"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function populateAICmd(text) {
+  document.getElementById('ai-assist-input').value = text.replace(/"/g, '');
+}
+
+async function executeAICommand(event) {
+  event.preventDefault();
+  const inputEl = document.getElementById('ai-assist-input');
+  const resultsEl = document.getElementById('ai-assist-results');
+  const planEl = document.getElementById('ai-plan-trace');
+  const statusEl = document.getElementById('ai-output-status');
+  const dataEl = document.getElementById('ai-output-data');
+  const auditEl = document.getElementById('ai-audit-log');
+  const auditDetailsEl = document.getElementById('ai-audit-log-details');
+  
+  const cmd = inputEl.value.trim();
+  if (!cmd) return;
+  
+  resultsEl.style.display = 'block';
+  planEl.innerHTML = '<li>Analyzing query intent...</li>';
+  statusEl.className = 'badge';
+  statusEl.style.background = '#F3F4F6';
+  statusEl.style.color = '#374151';
+  statusEl.innerText = 'Resolving transaction steps...';
+  dataEl.innerHTML = '';
+  auditEl.style.display = 'none';
+  
+  try {
+    const formData = new FormData();
+    formData.append('command', cmd);
+    formData.append('csrf_token', '{{ csrf_token }}');
+    
+    const res = await fetch('/api/ai-assist', {
+      method: 'POST',
+      body: formData
+    });
+    
+    if (!res.ok) {
+      const errData = await res.json();
+      throw new Error(errData.message || 'Server returned an error.');
+    }
+    
+    const data = await res.json();
+    
+    // 1. Render Plan
+    planEl.innerHTML = '';
+    if (data.plan && data.plan.length > 0) {
+      data.plan.forEach(step => {
+        const li = document.createElement('li');
+        li.innerText = step;
+        planEl.appendChild(li);
+      });
+    } else {
+      planEl.innerHTML = '<li>Plan trace generated</li>';
+    }
+    
+    // 2. Render Status
+    statusEl.innerText = data.message;
+    if (data.status === 'success') {
+      statusEl.style.background = '#DEF7EC';
+      statusEl.style.color = '#03543F';
+    } else if (data.status === 'warning') {
+      statusEl.style.background = '#FEF08A';
+      statusEl.style.color = '#713F12';
+    } else {
+      statusEl.style.background = '#FDE8E8';
+      statusEl.style.color = '#9B1C1C';
+    }
+    
+    // 3. Render Data payload
+    if (data.data) {
+      if (Array.isArray(data.data) && data.data.length > 0) {
+        // List table
+        let html = '<table class="portal-table"><thead><tr>';
+        const keys = Object.keys(data.data[0]);
+        keys.forEach(k => html += `<th>${k.replace('_', ' ').toUpperCase()}</th>`);
+        html += '</tr></thead><tbody>';
+        data.data.forEach(row => {
+          html += '<tr>';
+          keys.forEach(k => html += `<td><strong>${row[k]}</strong></td>`);
+          html += '</tr>';
+        });
+        html += '</tbody></table>';
+        dataEl.innerHTML = html;
+      } else if (typeof data.data === 'object') {
+        let html = '<table class="portal-table"><tbody>';
+        Object.entries(data.data).forEach(([k, v]) => {
+          html += `<tr><td><strong>${k.replace('_', ' ').toUpperCase()}</strong></td><td>${v}</td></tr>`;
+        });
+        html += '</tbody></table>';
+        dataEl.innerHTML = html;
+      }
+    }
+    
+    // 4. Render Audit
+    if (data.audit) {
+      auditEl.style.display = 'block';
+      auditDetailsEl.innerHTML = `
+        ID: ${data.audit.id || data.audit._id}<br>
+        Operator: ${data.audit.user}<br>
+        Operation: ${data.audit.action}<br>
+        Target: ${data.audit.target_student_name}<br>
+        Change: ${data.audit.subject} score updated to ${data.audit.new_score} / 100<br>
+        Timestamp: ${data.audit.timestamp}
+      `;
+    }
+    
+    // Re-initialize Lucide icons if any
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+  } catch (err) {
+    statusEl.style.background = '#FDE8E8';
+    statusEl.style.color = '#9B1C1C';
+    statusEl.innerText = err.message || 'Execution failed. Please check network.';
+  }
+}
+</script>
+
+<!-- INSTITUTIONAL KPI BLOCKS (Large 32-44px Numbers) -->
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <span class="kpi-label">Total Students</span>
+    <div class="kpi-number">{{ dashboard.students_count | default('N/A') }}</div>
+    <span style="font-size: 0.8rem; color: var(--text-muted);">Across Departments</span>
+  </div>
+
+  <div class="kpi-card">
+    <span class="kpi-label">Faculty Members</span>
+    <div class="kpi-number">{{ dashboard.faculty_count | default('N/A') }}</div>
+    <span style="font-size: 0.8rem; color: var(--text-muted);">Full-Time Staff</span>
+  </div>
+
+  <div class="kpi-card">
+    <span class="kpi-label">Active Courses</span>
+    <div class="kpi-number">{{ dashboard.courses_count | default('N/A') }}</div>
+    <span style="font-size: 0.8rem; color: var(--text-muted);">Current Catalog</span>
+  </div>
+
+  <div class="kpi-card">
+    <span class="kpi-label">Support Resolution Rate</span>
+    <div class="kpi-number" style="color: var(--status-success);">{{ outcomes.overall_success_rate | default('N/A') }}%</div>
+    <span style="font-size: 0.8rem; color: var(--status-success); font-weight: 700;">Goal Exceeded</span>
+  </div>
+</div>
+
+<!-- DEPARTMENT ENROLLMENT & ATTENDANCE CHARTS -->
+<div class="grid-equal-2">
+  <div class="portal-card">
+    <div class="portal-card-header">
+      <div>
+        <h3>Department Enrollment Distribution</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted);">Department Enrolled Headcount</p>
+      </div>
+    </div>
+    <div class="chart-box">
+      <canvas id="adminDeptChart"></canvas>
+    </div>
+  </div>
+
+  <div class="portal-card">
+    <div class="portal-card-header">
+      <div>
+        <h3>Attendance Rate by Department</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted);">Avg Attendance Rate (%)</p>
+      </div>
+    </div>
+    <div class="chart-box">
+      <canvas id="adminDeptAttChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN ADDITIONAL ANALYTICS GRIDS -->
+<div class="grid-equal-3" style="margin-bottom: 1.5rem; margin-top: 1.5rem;">
+  <div class="portal-card">
+    <div class="portal-card-header">
+      <div>
+        <h3>Risk Tier Distribution</h3>
+        <p style="font-size: 0.75rem; color: var(--text-muted);">Institutional alert segments (Pie)</p>
+      </div>
+    </div>
+    <div class="chart-box" style="height: 180px; position: relative;">
+      <canvas id="adminRiskPieChart"></canvas>
+    </div>
+  </div>
+  <div class="portal-card">
+    <div class="portal-card-header">
+      <div>
+        <h3>GPA vs Attendance (Scatter)</h3>
+        <p style="font-size: 0.75rem; color: var(--text-muted);">Core correlation analysis</p>
+      </div>
+    </div>
+    <div class="chart-box" style="height: 180px; position: relative;">
+      <canvas id="adminGpaAttScatterChart"></canvas>
+    </div>
+  </div>
+  <div class="portal-card">
+    <div class="portal-card-header">
+      <div>
+        <h3>Placements vs Enrollment</h3>
+        <p style="font-size: 0.75rem; color: var(--text-muted);">Department outcomes (Clustered)</p>
+      </div>
+    </div>
+    <div class="chart-box" style="height: 180px; position: relative;">
+      <canvas id="adminEnrollPlacementClusteredChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- INSTITUTIONAL SUPPORT OUTCOMES -->
+<div class="portal-card">
+  <div class="portal-card-header">
+    <h3>Academic Support Outcomes &amp; Growth</h3>
+    <a href="/admin/intervention_outcomes" style="font-size: 0.85rem; font-weight: 700;">Full Outcome Report →</a>
+  </div>
+
+  <div class="grid-3">
+    <div style="text-align: center; padding: 1.25rem; background: var(--burgundy-subtle-bg); border-radius: 10px; border: 1px solid var(--border-subtle);">
+      <div style="font-size: 2rem; font-weight: 800; color: var(--primary-burgundy);">{{ outcomes.total_interventions }}</div>
+      <div style="font-size: 0.775rem; color: var(--primary-burgundy); font-weight: 800; text-transform: uppercase;">TOTAL SUPPORT CASES</div>
+    </div>
+
+    <div style="text-align: center; padding: 1.25rem; background: var(--success-bg); border-radius: 10px; border: 1px solid rgba(40, 116, 90, 0.3);">
+      <div style="font-size: 2rem; font-weight: 800; color: var(--status-success);">{{ outcomes.resolved_count }}</div>
+      <div style="font-size: 0.775rem; color: var(--status-success); font-weight: 800; text-transform: uppercase;">SUCCESSFULLY RESOLVED</div>
+    </div>
+
+    <div style="text-align: center; padding: 1.25rem; background: var(--warning-bg); border-radius: 10px; border: 1px solid rgba(166, 106, 0, 0.3);">
+      <div style="font-size: 2rem; font-weight: 800; color: var(--status-warning);">{{ outcomes.in_progress_count }}</div>
+      <div style="font-size: 0.775rem; color: var(--status-warning); font-weight: 800; text-transform: uppercase;">IN PROGRESS MONITORING</div>
+    </div>
+  </div>
+</div>
+{% endblock %}

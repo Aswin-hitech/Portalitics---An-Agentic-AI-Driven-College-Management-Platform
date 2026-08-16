@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="user-banner">
+  <div>
+    <h1 class="user-greeting">Faculty & Staff Directory</h1>
+    <p class="user-subtext">Departmental Assignments & Faculty Roster</p>
+  </div>
+</div>
+
+<!-- Add Teacher Form -->
+<div class="ed-card" style="margin-bottom: 2rem;">
+  <h3>Register New Faculty Member</h3>
+  <form action="/admin/teachers/add" method="POST" style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <div style="flex: 1; min-width: 200px;">
+      <input type="text" name="name" placeholder="Prof. / Dr. Full Name" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--soft-red-border);" required>
+    </div>
+    <div style="flex: 1; min-width: 200px;">
+      <input type="email" name="email" placeholder="faculty.email@edusphere.edu" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--soft-red-border);" required>
+    </div>
+    <div style="flex: 1; min-width: 150px;">
+      <input type="text" name="department" value="Mathematics & CS" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--soft-red-border);" required>
+    </div>
+    <button type="submit" class="btn-primary">Add Faculty →</button>
+  </form>
+</div>
+
+<!-- Teacher Table -->
+<div class="ed-card">
+  <div class="ed-table-container">
+    <table class="ed-table">
+      <thead>
+        <tr>
+          <th>Faculty ID</th>
+          <th>Faculty Name</th>
+          <th>Institutional Email</th>
+          <th>Department</th>
+          <th>Designation</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if dashboard.faculty %}
+        {% for tch in dashboard.faculty %}
+        <tr>
+          <td>{{ tch.id }}</td>
+          <td><strong>{{ tch.name }}</strong></td>
+          <td>{{ tch.email }}</td>
+          <td>{{ tch.department_name | default('N/A') }}</td>
+          <td>{{ tch.designation | default('N/A') }}</td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr><td colspan="5" style="text-align: center;">No faculty members found.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

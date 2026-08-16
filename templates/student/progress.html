@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="user-banner">
+  <div>
+    <h1 class="user-greeting">My Growth Plan & AI Recommendations</h1>
+    <p class="user-subtext">Evidence-Grounded Action Plan Powered by Agentic Intelligence</p>
+  </div>
+  <div>
+    <a href="/reports/student/{{ user.id }}" target="_blank" class="btn-outline">Download PDF Report</a>
+  </div>
+</div>
+
+<div class="ed-card" style="border-top: 4px solid var(--primary-dark-red);">
+  <h2 style="margin-bottom: 1rem;">Academic Health Breakdown</h2>
+  
+  <div class="grid-3" style="margin-bottom: 1.5rem;">
+    <div style="background: var(--light-red-bg); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--soft-red-border);">
+      <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">ATTENDANCE STABILITY</div>
+      <div style="font-size: 1.8rem; font-weight: 800; color: var(--primary-dark-red);">{{ metrics.attendance.percentage }}%</div>
+      <div style="font-size: 0.85rem; color: #DC2626;">Trend: {{ metrics.attendance.trend }}</div>
+    </div>
+
+    <div style="background: var(--light-red-bg); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--soft-red-border);">
+      <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">EXAM SCORE AVERAGE</div>
+      <div style="font-size: 1.8rem; font-weight: 800; color: var(--primary-dark-red);">{{ metrics.grades.average_score }} / 100</div>
+      <div style="font-size: 0.85rem; color: #DC2626;">Weak Area: Algebra</div>
+    </div>
+
+    <div style="background: var(--light-red-bg); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--soft-red-border);">
+      <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">ASSIGNMENT RATE</div>
+      <div style="font-size: 1.8rem; font-weight: 800; color: var(--primary-dark-red);">{{ metrics.assignments.completion_rate }}%</div>
+      <div style="font-size: 0.85rem; color: var(--text-muted);">Delays: {{ metrics.assignments.delays_count }} submission</div>
+    </div>
+  </div>
+
+  <div class="ai-recommendation-box">
+    <h3 style="color: var(--primary-dark-red); margin-bottom: 0.5rem;">Suggested Learning Focus & Next Steps</h3>
+    <p style="font-size: 0.95rem; color: var(--text-dark); margin-bottom: 1rem;">
+      {{ eval.recommendation.suggested_action }}
+    </p>
+
+    <h4 style="font-size: 0.9rem; color: var(--primary-dark-red);">Actionable Tips:</h4>
+    <ul class="ai-signal-list">
+      {% for tip in ai_report.tips %}
+      <li class="ai-signal-item">
+        <span class="ai-signal-bullet">✓</span>
+        <span>{{ tip }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="user-banner">
+  <div>
+    <span class="badge-priority badge-monitor">{{ course.code }}</span>
+    <h1 class="user-greeting" style="margin-top: 0.5rem;">{{ course.title }}</h1>
+    <p class="user-subtext">Category: {{ course.category }} • Credits: {{ course.credits }}</p>
+  </div>
+  <div>
+    {% if user and user.role == 'student' %}
+      <form action="/student/enroll/{{ course.id }}" method="POST">
+        <button type="submit" class="btn-primary">Enroll Now →</button>
+      </form>
+    {% else %}
+      <a href="/login" class="btn-primary">Sign In to Enroll →</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="grid-2">
+  <div>
+    <div class="ed-card">
+      <h3 style="margin-bottom: 0.75rem;">Course Overview</h3>
+      <p style="color: var(--text-dark); line-height: 1.7;">{{ course.description }}</p>
+
+      <h3 style="margin: 1.5rem 0 0.75rem 0;">Detailed Syllabus Modules</h3>
+      <ul style="list-style: none; padding: 0;">
+        {% for module in course.syllabus %}
+        <li style="padding: 0.6rem 0; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; gap: 0.5rem;">
+          <span style="color: var(--primary-dark-red); font-weight: 800;">•</span>
+          <span style="font-weight: 500; font-size: 0.95rem;">{{ module }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <div>
+    <div class="ed-card">
+      <h3 style="margin-bottom: 0.75rem;">Lead Instructor Info</h3>
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div style="width: 50px; height: 50px; border-radius: 50%; background: var(--primary-dark-red); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem;">
+          {{ course.teacher_name[0] }}
+        </div>
+        <div>
+          <strong>{{ course.teacher_name }}</strong>
+          <div style="font-size: 0.85rem; color: var(--text-muted);">Department of Mathematics & CS</div>
+        </div>
+      </div>
+
+      <div style="background: var(--light-red-bg); padding: 1rem; border-radius: 10px; border: 1px solid var(--soft-red-border);">
+        <strong style="color: var(--primary-dark-red); font-size: 0.85rem;">Class Schedule:</strong>
+        <p style="font-weight: 600; color: var(--text-dark); margin-top: 0.2rem;">{{ course.schedule }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="user-banner">
+  <div>
+    <h1 class="user-greeting">My Attendance History</h1>
+    <p class="user-subtext">Class Sessions & Presence Log</p>
+  </div>
+</div>
+
+<div class="ed-card">
+  <div class="ed-table-container">
+    <table class="ed-table">
+      <thead>
+        <tr>
+          <th>Session Date</th>
+          <th>Subject / Course</th>
+          <th>Presence Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if dashboard.attendance %}
+        {% for att in dashboard.attendance %}
+        <tr>
+          <td>{{ att.date }}</td>
+          <td><strong>{{ att.subject }}</strong></td>
+          <td>
+            {% if att.status == 'present' %}
+              <span style="color: #059669; font-weight: 600;">✓ Present</span>
+            {% else %}
+              <span style="color: #7A0C0C; font-weight: 600;">✗ Absent</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr><td colspan="3" style="text-align: center;">No attendance records found.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

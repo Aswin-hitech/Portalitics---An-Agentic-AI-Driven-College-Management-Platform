@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+  <h1 style="font-size: 2.5rem; color: var(--text-white); margin-bottom: 0.5rem;">Explore Departments</h1>
+  <p style="color: var(--text-muted); font-size: 1.05rem;">Academic divisions, degree programs, and faculty bodies across Portalitics Institute.</p>
+</div>
+
+<div class="grid-3">
+  {% for dept in departments %}
+  <div class="portal-card">
+    <span class="badge badge-info" style="margin-bottom: 0.75rem;">{{ dept.code }}</span>
+    <h3 style="font-size: 1.25rem; color: var(--text-white); margin-bottom: 0.4rem;">{{ dept.name }}</h3>
+    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.15rem;">HOD: {{ dept.hod_name | default('Dr. S. Ramanathan') }}</p>
+
+    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-white-subtle); border-radius: 8px; padding: 0.75rem; margin-bottom: 1.15rem; display: flex; justify-content: space-between; text-align: center;">
+      <div>
+        <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; display: block;">Programs</span>
+        <strong style="font-size: 1.1rem; color: var(--text-white);">2</strong>
+      </div>
+      <div>
+        <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; display: block;">Faculty</span>
+        <strong style="font-size: 1.1rem; color: var(--text-white);">{{ dept.faculty_count | default(12) }}</strong>
+      </div>
+      <div>
+        <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; display: block;">Students</span>
+        <strong style="font-size: 1.1rem; color: var(--text-white);">{{ dept.student_count | default(240) }}</strong>
+      </div>
+    </div>
+
+    <a href="/courses?q={{ dept.code }}" class="btn-outline" style="width: 100%; justify-content: center; font-size: 0.85rem;">VIEW DEPARTMENT COURSES →</a>
+  </div>
+  {% else %}
+  <div class="portal-card" style="grid-column: 1 / -1; text-align: center;">
+    <p style="color: var(--text-muted);">Academic department directory is being initialized.</p>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

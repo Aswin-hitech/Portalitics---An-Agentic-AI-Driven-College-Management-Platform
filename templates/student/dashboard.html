@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Official Academic Student Header -->
+<div class="academic-hero-banner">
+  <div class="student-identity">
+    <img src="{{ user.avatar }}" alt="Student Avatar" class="student-avatar">
+    <div>
+      <h1>Good Morning, {{ user.name.split(' ')[0] }}.</h1>
+      <p style="color: var(--text-secondary); margin-top: 0.2rem;">
+        {{ user.program_name | default('N/A') }} · Semester {{ user.semester | default('N/A') }} (Section {{ user.section | default('N/A') }})
+      </p>
+    </div>
+  </div>
+  <div>
+    <span class="badge badge-info" style="font-size: 0.85rem; padding: 0.4rem 0.95rem;">
+      Roll No: {{ user.roll_number | default('N/A') }}
+    </span>
+  </div>
+</div>
+
+<!-- CURRENT ACADEMIC SNAPSHOT (Large 32-44px Numbers) -->
+<div style="margin-bottom: 1.75rem;">
+  <h2 style="font-size: 1.05rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.85rem;">
+    Academic Overview
+  </h2>
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <span class="kpi-label">Cumulative CGPA</span>
+      <div class="kpi-number">{{ user.cgpa | default('N/A') }}</div>
+      <span style="font-size: 0.8rem; color: var(--status-success); font-weight: 700;">Stable</span>
+    </div>
+
+    <div class="kpi-card">
+      <span class="kpi-label">Class Attendance</span>
+      <div class="kpi-number">{{ metrics.attendance.percentage }}%</div>
+      <span style="font-size: 0.8rem; color: var(--text-muted);">{{ metrics.attendance.trend }} trend</span>
+    </div>
+
+    <div class="kpi-card">
+      <span class="kpi-label">Active Courses</span>
+      <div class="kpi-number">{{ courses | length }}</div>
+      <span style="font-size: 0.8rem; color: var(--text-muted);">Enrolled Modules</span>
+    </div>
+
+    <div class="kpi-card">
+      <span class="kpi-label">Pending Work</span>
+      <div class="kpi-number">{{ metrics.assignments.missed_count + metrics.assignments.delays_count }}</div>
+      <span style="font-size: 0.8rem; color: var(--status-warning); font-weight: 700;">Action Required</span>
+    </div>
+  </div>
+</div>
+
+<!-- ASYMMETRIC GRID (70 / 30): Academic Performance Chart + Upcoming Contextual -->
+<div class="grid-asymmetric-70">
+  <!-- Large Academic Performance Line Chart -->
+  <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+    <div class="grid-equal-2">
+      <div class="portal-card">
+        <div class="portal-card-header">
+          <div>
+            <h3>Attendance Progression</h3>
+            <p style="font-size: 0.75rem; color: var(--text-muted);">Recent attendance logs</p>
+          </div>
+        </div>
+        <div class="chart-box" style="height: 200px; position: relative;">
+          <canvas id="studentAttendanceChart"></canvas>
+        </div>
+      </div>
+      <div class="portal-card">
+        <div class="portal-card-header">
+          <div>
+            <h3>GPA Progression</h3>
+            <p style="font-size: 0.75rem; color: var(--text-muted);">Semester CGPA tracker</p>
+          </div>
+        </div>
+        <div class="chart-box" style="height: 200px; position: relative;">
+          <canvas id="studentCgpaChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="grid-equal-2">
+      <div class="portal-card">
+        <div class="portal-card-header">
+          <div>
+            <h3>Assignments Status</h3>
+            <p style="font-size: 0.75rem; color: var(--text-muted);">Completed vs pending workload</p>
+          </div>
+        </div>
+        <div class="chart-box" style="height: 200px; position: relative;">
+          <canvas id="studentAssignmentPieChart"></canvas>
+        </div>
+      </div>
+      <div class="portal-card">
+        <div class="portal-card-header">
+          <div>
+            <h3>Attendance vs GPA Correlation</h3>
+            <p style="font-size: 0.75rem; color: var(--text-muted);">Scatter performance analysis</p>
+          </div>
+        </div>
+        <div class="chart-box" style="height: 200px; position: relative;">
+          <canvas id="studentExamScatterChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UPCOMING CONTEXTUAL CARD -->
+  <div class="portal-card" style="background: var(--bg-soft-gray);">
+    <div class="portal-card-header">
+      <h3>Upcoming</h3>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 1rem;">
+      <div style="background: var(--surface-white); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.9rem;">
+        <span class="badge badge-danger" style="font-size: 0.75rem; margin-bottom: 0.35rem;">Tomorrow · 10:00 AM</span>
+        <strong style="display: block; font-size: 0.95rem; color: var(--text-primary);">DBMS Examination</strong>
+        <span style="font-size: 0.85rem; color: var(--text-muted);">Hall B · Room 204</span>
+      </div>
+
+      <div style="background: var(--surface-white); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.9rem;">
+        <span class="badge badge-warning" style="font-size: 0.75rem; margin-bottom: 0.35rem;">Due Friday · 11:59 PM</span>
+        <strong style="display: block; font-size: 0.95rem; color: var(--text-primary);">AI & Machine Learning Assignment</strong>
+        <span style="font-size: 0.85rem; color: var(--text-muted);">Module 3 Problem Set</span>
+      </div>
+
+      <div style="background: var(--surface-white); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.9rem;">
+        <span class="badge badge-info" style="font-size: 0.75rem; margin-bottom: 0.35rem;">Aug 20 · 02:00 PM</span>
+        <strong style="display: block; font-size: 0.95rem; color: var(--text-primary);">Department Guest Seminar</strong>
+        <span style="font-size: 0.85rem; color: var(--text-muted);">Cloud ERP Architectures</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ✦ ACADEMIC INSIGHT (Invisible AI Technology) -->
+<div class="academic-ai-card">
+  <div class="ai-header-row">
+    <div class="sparkle-badge">
+      <span>✦</span>
+      <span>ACADEMIC INSIGHT</span>
+    </div>
+    <button class="why-pill-btn">Why am I seeing this?</button>
+  </div>
+
+  <p style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem;">
+    "{{ support_eval.recommendation.observation }}"
+  </p>
+
+  <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+    Evidence: {{ support_eval.recommendation.evidence }}
+  </p>
+
+  <div style="background: var(--burgundy-subtle-bg); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.75rem 1rem; color: var(--primary-burgundy); font-weight: 600; font-size: 0.9rem;">
+    Recommendation: {{ support_eval.recommendation.recommendation }}
+  </div>
+</div>
+
+<!-- COURSEWORK & ENROLLED COURSES -->
+<div class="grid-equal-2">
+  <div class="portal-card">
+    <div class="portal-card-header">
+      <h3>Active Enrolled Courses</h3>
+      <a href="/student/courses" style="font-size: 0.85rem; font-weight: 700;">Course Catalog →</a>
+    </div>
+
+    <div class="portal-table-container">
+      <table class="portal-table">
+        <thead>
+          <tr>
+            <th>Course Code</th>
+            <th>Title</th>
+            <th>Faculty</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for course in courses %}
+          <tr>
+            <td><strong style="color: var(--primary-burgundy);">{{ course.code }}</strong></td>
+            <td>{{ course.title }}</td>
+            <td>{{ course.teacher_name | default(course.faculty_name) | default('N/A') }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="portal-card">
+    <div class="portal-card-header">
+      <h3>Coursework Tasks</h3>
+      <a href="/student/assignments" style="font-size: 0.85rem; font-weight: 700;">View Tasks →</a>
+    </div>
+
+    <div class="portal-table-container">
+      <table class="portal-table">
+        <thead>
+          <tr>
+            <th>Assignment</th>
+            <th>Due Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in history.assignments %}
+          <tr>
+            <td><strong>{{ a.title }}</strong></td>
+            <td>{{ a.due_date }}</td>
+            <td>
+              {% if a.status == 'submitted' %}
+                <span class="badge badge-success">Completed</span>
+              {% else %}
+                <span class="badge badge-warning">Pending</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

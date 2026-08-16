@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto;">
+
+  <!-- Hero Header -->
+  <div class="academic-hero-banner" style="margin-bottom: 2rem; background: linear-gradient(135deg, #111827 0%, #1F2937 100%);">
+    <div>
+      <h1 style="color: var(--pure-white);">Academic Guidance &amp; Support Desk</h1>
+      <p style="color: rgba(255,255,255,0.7); margin-top: 0.25rem;">
+        Get in touch with the PIT administrative office, browse FAQs, or send an inquiry.
+      </p>
+    </div>
+  </div>
+
+  {% if success_message %}
+  <div style="background-color: rgba(16, 185, 129, 0.1); border: 1px solid #10B981; color: #047857; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-weight: 600;">
+    {{ success_message }}
+  </div>
+  {% endif %}
+
+  <div class="grid-equal-2" style="align-items: start; gap: 2rem;">
+    
+    <!-- Contact Info & FAQ column -->
+    <div style="display: flex; flex-direction: column; gap: 2rem;">
+      
+      <!-- Contact Info Card -->
+      <div class="portal-card">
+        <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+          <i data-lucide="info" style="color: var(--primary-burgundy); width: 20px; height: 20px;"></i>
+          Contact Information
+        </h3>
+        
+        <div style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.9rem; color: var(--text-secondary);">
+          <div>
+            <strong>Campus Location:</strong> 123 Education Boulevard, Tech City, 600097
+          </div>
+          <div>
+            <strong>Office Phone:</strong> +91-44-24501234
+          </div>
+          <div>
+            <strong>Email Desk:</strong> support@pit.edu / info@pit.edu
+          </div>
+          <div>
+            <strong>Office Hours:</strong> Monday - Friday, 9:00 AM - 5:00 PM
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ Card -->
+      <div class="portal-card">
+        <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+          <i data-lucide="help-circle" style="color: var(--primary-burgundy); width: 20px; height: 20px;"></i>
+          Frequently Asked Questions
+        </h3>
+
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          <div>
+            <h4 style="font-size: 0.95rem; margin-bottom: 0.25rem; color: var(--text-primary);">How are AI academic interventions initiated?</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4;">
+              Interventions are initiated automatically by our risk prediction model when a student's attendance drops below 75% or scores fall continuously. Faculty can also flag a student manually.
+            </p>
+          </div>
+          <div>
+            <h4 style="font-size: 0.95rem; margin-bottom: 0.25rem; color: var(--text-primary);">Who reviews active student support plans?</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4;">
+              Active support plans are reviewed by the respective class faculty, department HODs, and academic counselors during regular evaluation windows.
+            </p>
+          </div>
+          <div>
+            <h4 style="font-size: 0.95rem; margin-bottom: 0.25rem; color: var(--text-primary);">How do I request a bonafide or leave approval?</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4;">
+              Students can file requests under their dashboard under the "Requests" panel. HODs review and grant approvals directly from their command center.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Contact Form column -->
+    <div class="portal-card">
+      <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+        <i data-lucide="mail" style="color: var(--primary-burgundy); width: 20px; height: 20px;"></i>
+        Send an Academic Inquiry
+      </h3>
+      
+      <form action="/contact" method="POST" style="display: flex; flex-direction: column; gap: 1rem;">
+        <div>
+          <label style="font-weight: 600; font-size: 0.85rem; color: var(--text-dark);">Full Name</label>
+          <input type="text" name="name" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--soft-red-border); margin-top: 0.3rem;" placeholder="Your Name" required>
+        </div>
+
+        <div>
+          <label style="font-weight: 600; font-size: 0.85rem; color: var(--text-dark);">Email Address</label>
+          <input type="email" name="email" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--soft-red-border); margin-top: 0.3rem;" placeholder="name@college.edu" required>
+        </div>
+
+        <div>
+          <label style="font-weight: 600; font-size: 0.85rem; color: var(--text-dark);">Describe your Inquiries or Subject</label>
+          <textarea name="message" rows="5" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--soft-red-border); margin-top: 0.3rem;" placeholder="What help or support details do you need?" required></textarea>
+        </div>
+
+        <button type="submit" class="btn-primary" style="justify-content: center; margin-top: 0.5rem;">Send Inquiry →</button>
+      </form>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

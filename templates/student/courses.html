@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="user-banner">
+  <div>
+    <h1 class="user-greeting">My Learning Paths</h1>
+    <p class="user-subtext">Active Enrolled Courses & Curriculum Outline</p>
+  </div>
+</div>
+
+<div class="grid-3">
+  {% if dashboard.enrollments %}
+  {% for course in dashboard.enrollments %}
+  <div class="ed-card">
+    <span class="badge-priority badge-monitor">{{ course.code }}</span>
+    <h3 style="margin: 0.75rem 0 0.25rem 0;">{{ course.title }}</h3>
+    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">Instructor: {{ course.teacher }}</p>
+
+    <div style="background: var(--light-red-bg); padding: 0.75rem; border-radius: 8px; font-size: 0.85rem; color: var(--primary-dark-red); margin-bottom: 1rem;">
+      {{ course.schedule }}
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-weight: 700;">Progress: {{ course.progress_pct }}%</span>
+      <a href="/student/progress" class="btn-outline" style="font-size: 0.8rem; padding: 0.3rem 0.7rem;">Course Insights</a>
+    </div>
+  </div>
+  {% endfor %}
+  {% else %}
+  <div class="ed-card" style="grid-column: 1 / -1; text-align: center;">
+    <p>No active enrolled courses.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

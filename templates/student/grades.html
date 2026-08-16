@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="user-banner">
+  <div>
+    <h1 class="user-greeting">My Exam Marks & Assessment Records</h1>
+    <p class="user-subtext">Subject Score Trends & Exam History</p>
+  </div>
+</div>
+
+<div class="ed-card">
+  <div class="ed-table-container">
+    <table class="ed-table">
+      <thead>
+        <tr>
+          <th>Assessment Name</th>
+          <th>Subject</th>
+          <th>Date</th>
+          <th>Score Obtained</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if dashboard.results %}
+        {% for exam in dashboard.results %}
+        <tr>
+          <td><strong>{{ exam.exam_name }}</strong></td>
+          <td>{{ exam.subject }}</td>
+          <td>{{ exam.date }}</td>
+          <td>
+            <span style="font-weight: 700; color: {% if exam.score < 60 %}#7A0C0C{% else %}#059669{% endif %};">
+              {{ exam.score }} / 100
+            </span>
+          </td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr><td colspan="4" style="text-align: center;">No exam records found.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

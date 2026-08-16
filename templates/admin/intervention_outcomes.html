@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="user-banner">
+  <div>
+    <h1 class="user-greeting">Learning Support Outcomes & Success Rate</h1>
+    <p class="user-subtext">Evaluating 14-Day Growth & Recovery Across Departments</p>
+  </div>
+  <div>
+    <a href="/reports/comparative" target="_blank" class="btn-outline">Comparative Report</a>
+  </div>
+</div>
+
+<div class="ed-card" style="border-top: 4px solid var(--primary-dark-red);">
+  <h2 style="margin-bottom: 1rem;">Institutional Success Metrics</h2>
+
+  <div class="grid-3" style="margin-bottom: 2rem;">
+    <div style="background: #ECFDF5; padding: 1.5rem; border-radius: 14px; border: 1px solid #A7F3D0; text-align: center;">
+      <div style="font-size: 0.85rem; font-weight: 600; color: #065F46;">OVERALL SUCCESS RATE</div>
+      <div style="font-size: 2.2rem; font-weight: 800; color: #047857;">{{ outcomes.overall_success_rate }}%</div>
+      <div style="font-size: 0.8rem; color: #065F46;">Students Reaching Target Metrics</div>
+    </div>
+
+    <div style="background: var(--light-red-bg); padding: 1.5rem; border-radius: 14px; border: 1px solid var(--soft-red-border); text-align: center;">
+      <div style="font-size: 0.85rem; font-weight: 600; color: var(--primary-dark-red);">AVG ATTENDANCE RECOVERY</div>
+      <div style="font-size: 2.2rem; font-weight: 800; color: var(--primary-dark-red);">+12.4%</div>
+      <div style="font-size: 0.8rem; color: var(--primary-dark-red);">Post-Support Intervention</div>
+    </div>
+
+    <div style="background: var(--light-red-bg); padding: 1.5rem; border-radius: 14px; border: 1px solid var(--soft-red-border); text-align: center;">
+      <div style="font-size: 0.85rem; font-weight: 600; color: var(--primary-dark-red);">AVERAGE RESOLUTION TIME</div>
+      <div style="font-size: 2.2rem; font-weight: 800; color: var(--primary-dark-red);">9.4 Days</div>
+      <div style="font-size: 0.8rem; color: var(--primary-dark-red);">Within 14-Day Evaluation Window</div>
+    </div>
+  </div>
+
+  <h3>Active & Resolved Support Cases</h3>
+  <div class="ed-table-container" style="margin-top: 1rem;">
+    <table class="ed-table">
+      <thead>
+        <tr>
+          <th>Student</th>
+          <th>Faculty Lead</th>
+          <th>Course</th>
+          <th>Initial Issue</th>
+          <th>Status</th>
+          <th>Post-Intervention Result</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Ram Kumar</strong></td>
+          <td>Prof. Priyanka Sharma</td>
+          <td>Advanced Engineering Maths</td>
+          <td>Attendance 72%, Algebra drop</td>
+          <td><span style="background: #FEF3C7; color: #D97706; padding: 0.25rem 0.6rem; border-radius: 12px; font-weight: 600; font-size: 0.8rem;">In Progress</span></td>
+          <td>Attendance recovered to 84% (+12%)</td>
+        </tr>
+        <tr>
+          <td><strong>Vikram Singh</strong></td>
+          <td>Dr. Rajesh Verma</td>
+          <td>Database Systems</td>
+          <td>Missed 2 lab assignments</td>
+          <td><span style="background: #D1FAE5; color: #059669; padding: 0.25rem 0.6rem; border-radius: 12px; font-weight: 600; font-size: 0.8rem;">Resolved</span></td>
+          <td>All lab submissions completed (100%)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

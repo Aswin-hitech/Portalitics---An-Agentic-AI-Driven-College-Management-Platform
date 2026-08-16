@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="user-banner">
+  <div>
+    <h1 class="user-greeting">Coursework & Homework Log</h1>
+    <p class="user-subtext">Manage Assignments & Review AI Assisted Marking</p>
+  </div>
+  <div>
+    <button class="btn-primary" onclick="alert('Creating new assignment modal...')">+ Create New Assignment</button>
+  </div>
+</div>
+
+<div class="ed-card">
+  <div class="ed-table-container">
+    <table class="ed-table">
+      <thead>
+        <tr>
+          <th>Assignment Title</th>
+          <th>Subject</th>
+          <th>Due Date</th>
+          <th>Submissions Received</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if dashboard.assignments %}
+        {% for a in dashboard.assignments %}
+        <tr>
+          <td><strong>{{ a.title }}</strong></td>
+          <td>{{ a.subject }}</td>
+          <td>{{ a.due_date }}</td>
+          <td>{{ a.submissions }} / {{ a.total_students }} Students</td>
+          <td><button class="btn-outline" style="font-size: 0.8rem; padding: 0.3rem 0.6rem;">Review Submissions</button></td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr><td colspan="5" style="text-align: center;">No assignments found.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

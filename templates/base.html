@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page_title | default("PORTALITICS — Official Digital Campus Platform") }}</title>
+  <link rel="stylesheet" href="/static/css/base.css">
+  <link rel="stylesheet" href="/static/css/dashboard.css">
+  <!-- Chart.js Visualization Engine -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Lucide Icons (Monochrome, Thin, Professional) -->
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.js"></script>
+</head>
+<body>
+
+  <!-- Minimal Warm White Loading Screen Overlay -->
+  <div class="portalitics-loader-overlay" id="portaliticsLoader">
+    <div style="text-align: center;">
+      <h1 style="font-size: 2.25rem; letter-spacing: 0.05em; color: var(--text-primary); margin-bottom: 0.35rem;">
+        PORTALITICS
+      </h1>
+      <p style="font-size: 0.9rem; color: var(--text-muted); font-weight: 500;">
+        Loading your campus...
+      </p>
+      <div style="width: 120px; height: 3px; background: var(--bg-soft-gray); border-radius: 4px; margin: 1.15rem auto 0 auto; overflow: hidden;">
+        <div style="width: 40%; height: 100%; background: var(--primary-burgundy); animation: lightShimmer 1.2s infinite;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tooltip element for collapsed sidebar -->
+  <div class="sidebar-tooltip" id="sidebarTooltip"></div>
+
+  <div class="portal-wrapper">
+
+    <!-- ============================================================
+         PREMIUM UNIVERSITY SIDEBAR NAVIGATION
+         ============================================================ -->
+    <aside class="sidebar" id="sidebar">
+
+      <!-- BRAND -->
+      <div class="sidebar-brand">
+        <a href="/" class="sidebar-brand-link">
+          <div class="sidebar-brand-icon">
+            <i data-lucide="landmark" style="width: 20px; height: 20px; stroke-width: 1.7; color: var(--primary-burgundy);"></i>
+          </div>
+          <div class="sidebar-brand-text">
+            <div class="brand-name">PORTALITICS</div>
+            <div class="brand-sub">Digital Campus</div>
+          </div>
+        </a>
+        <!-- Collapse Toggle -->
+        <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" title="Toggle sidebar">
+          <i data-lucide="panel-left-close" style="width: 14px; height: 14px; stroke-width: 1.7; color: var(--text-muted);"></i>
+        </button>
+      </div>
+
+      <!-- NAVIGATION -->
+      <nav class="sidebar-nav-container">
+
+        {% if user and user.role == 'student' %}
+        <!-- ===== STUDENT NAVIGATION ===== -->
+        <div class="nav-section-title">Main</div>
+        <a href="/student/dashboard" class="sidebar-link {% if 'dashboard' in request.url.path %}active{% endif %}">
+          <i data-lucide="layout-dashboard" class="nav-icon"></i>
+          <span class="nav-text">Overview</span>
+        </a>
+        <a href="/student/courses" class="sidebar-link {% if 'courses' in request.url.path %}active{% endif %}">
+          <i data-lucide="book-open" class="nav-icon"></i>
+          <span class="nav-text">My Courses</span>
+        </a>
+        <a href="/student/attendance" class="sidebar-link {% if 'attendance' in request.url.path %}active{% endif %}">
+          <i data-lucide="calendar-check" class="nav-icon"></i>
+          <span class="nav-text">Attendance</span>
+        </a>
+        <a href="/student/assignments" class="sidebar-link {% if 'assignments' in request.url.path %}active{% endif %}">
+          <i data-lucide="file-text" class="nav-icon"></i>
+          <span class="nav-text">Assignments</span>
+        </a>
+        <a href="/student/grades" class="sidebar-link {% if 'grades' in request.url.path %}active{% endif %}">
+          <i data-lucide="graduation-cap" class="nav-icon"></i>
+          <span class="nav-text">Examinations</span>
+        </a>
+        <a href="/student/grades" class="sidebar-link {% if 'results' in request.url.path %}active{% endif %}">
+          <i data-lucide="award" class="nav-icon"></i>
+          <span class="nav-text">Results</span>
+        </a>
+
+        <div class="nav-section-title">Academic</div>
+        <a href="/student/timetable" class="sidebar-link {% if 'timetable' in request.url.path %}active{% endif %}">
+          <i data-lucide="clock" class="nav-icon"></i>
+          <span class="nav-text">Timetable</span>
+        </a>
+        <a href="/student/progress" class="sidebar-link {% if 'progress' in request.url.path %}active{% endif %}">
+          <i data-lucide="trending-up" class="nav-icon"></i>
+          <span class="nav-text">Academic Performance</span>
+        </a>
+        <a href="/student/profile" class="sidebar-link {% if 'profile' in request.url.path %}active{% endif %}">
+          <i data-lucide="compass" class="nav-icon"></i>
+          <span class="nav-text">Academic Guidance</span>
+        </a>
+
+        <div class="nav-section-title">Campus</div>
+        <a href="/events" class="sidebar-link {% if 'events' in request.url.path %}active{% endif %}">
+          <i data-lucide="calendar-days" class="nav-icon"></i>
+          <span class="nav-text">Events</span>
+        </a>
+        <a href="/notices" class="sidebar-link {% if 'notices' in request.url.path %}active{% endif %}">
+          <i data-lucide="bell" class="nav-icon"></i>
+          <span class="nav-text">Notices</span>
+        </a>
+
+        {% elif user and (user.role == 'faculty' or user.role == 'hod') %}
+        <!-- ===== FACULTY / HOD NAVIGATION ===== -->
+        <div class="nav-section-title">Main</div>
+        <a href="/faculty/dashboard" class="sidebar-link {% if 'dashboard' in request.url.path and 'hod' not in request.url.path %}active{% endif %}">
+          <i data-lucide="layout-dashboard" class="nav-icon"></i>
+          <span class="nav-text">Overview</span>
+        </a>
+        {% if user.role == 'hod' %}
+        <a href="/faculty/hod-dashboard" class="sidebar-link {% if 'hod-dashboard' in request.url.path %}active{% endif %}">
+          <i data-lucide="building" class="nav-icon"></i>
+          <span class="nav-text">HOD Dashboard</span>
+        </a>
+        {% endif %}
+        <a href="/faculty/classes" class="sidebar-link {% if 'classes' in request.url.path %}active{% endif %}">
+          <i data-lucide="presentation" class="nav-icon"></i>
+          <span class="nav-text">My Classes</span>
+        </a>
+        <a href="/faculty/students" class="sidebar-link {% if 'students' in request.url.path %}active{% endif %}">
+          <i data-lucide="users" class="nav-icon"></i>
+          <span class="nav-text">Students</span>
+        </a>
+        <a href="/faculty/attendance" class="sidebar-link {% if 'attendance' in request.url.path %}active{% endif %}">
+          <i data-lucide="calendar-check" class="nav-icon"></i>
+          <span class="nav-text">Attendance</span>
+        </a>
+        <a href="/faculty/assignments" class="sidebar-link {% if 'assignments' in request.url.path %}active{% endif %}">
+          <i data-lucide="file-text" class="nav-icon"></i>
+          <span class="nav-text">Assignments</span>
+        </a>
+        <a href="/faculty/exams" class="sidebar-link {% if 'exams' in request.url.path %}active{% endif %}">
+          <i data-lucide="clipboard-list" class="nav-icon"></i>
+          <span class="nav-text">Examinations</span>
+        </a>
+
+        <div class="nav-section-title">Academic</div>
+        <a href="/faculty/intervention_queue" class="sidebar-link {% if 'intervention' in request.url.path %}active{% endif %}">
+          <i data-lucide="bar-chart-3" class="nav-icon"></i>
+          <span class="nav-text">Performance</span>
+        </a>
+        <a href="/faculty/intervention_queue" class="sidebar-link">
+          <i data-lucide="file-bar-chart" class="nav-icon"></i>
+          <span class="nav-text">Reports</span>
+        </a>
+
+        <div class="nav-section-title">Campus</div>
+        <a href="/events" class="sidebar-link {% if 'events' in request.url.path %}active{% endif %}">
+          <i data-lucide="calendar-days" class="nav-icon"></i>
+          <span class="nav-text">Events</span>
+        </a>
+        <a href="/notices" class="sidebar-link {% if 'notices' in request.url.path %}active{% endif %}">
+          <i data-lucide="bell" class="nav-icon"></i>
+          <span class="nav-text">Notices</span>
+        </a>
+
+        {% elif user and user.role == 'admin' %}
+        <!-- ===== ADMIN NAVIGATION ===== -->
+        <div class="nav-section-title">Administration</div>
+        <a href="/admin/dashboard" class="sidebar-link {% if 'dashboard' in request.url.path %}active{% endif %}">
+          <i data-lucide="layout-dashboard" class="nav-icon"></i>
+          <span class="nav-text">Overview</span>
+        </a>
+        <a href="/admin/students" class="sidebar-link {% if 'students' in request.url.path %}active{% endif %}">
+          <i data-lucide="users" class="nav-icon"></i>
+          <span class="nav-text">Students</span>
+        </a>
+        <a href="/admin/teachers" class="sidebar-link {% if 'teachers' in request.url.path %}active{% endif %}">
+          <i data-lucide="user-check" class="nav-icon"></i>
+          <span class="nav-text">Faculty</span>
+        </a>
+        <a href="/departments" class="sidebar-link {% if 'departments' in request.url.path %}active{% endif %}">
+          <i data-lucide="building-2" class="nav-icon"></i>
+          <span class="nav-text">Departments</span>
+        </a>
+        <a href="/admin/courses" class="sidebar-link {% if 'courses' in request.url.path %}active{% endif %}">
+          <i data-lucide="book-open" class="nav-icon"></i>
+          <span class="nav-text">Courses</span>
+        </a>
+
+        <div class="nav-section-title">Academics</div>
+        <a href="/admin/attendance" class="sidebar-link {% if 'attendance' in request.url.path %}active{% endif %}">
+          <i data-lucide="calendar-check" class="nav-icon"></i>
+          <span class="nav-text">Attendance</span>
+        </a>
+        <a href="/admin/exams" class="sidebar-link {% if 'exams' in request.url.path %}active{% endif %}">
+          <i data-lucide="clipboard-list" class="nav-icon"></i>
+          <span class="nav-text">Examinations</span>
+        </a>
+        <a href="/admin/analytics" class="sidebar-link {% if 'analytics' in request.url.path %}active{% endif %}">
+          <i data-lucide="trending-up" class="nav-icon"></i>
+          <span class="nav-text">Academic Performance</span>
+        </a>
+
+        <div class="nav-section-title">Insights</div>
+        <a href="/admin/intervention_outcomes" class="sidebar-link {% if 'outcomes' in request.url.path %}active{% endif %}">
+          <i data-lucide="file-bar-chart" class="nav-icon"></i>
+          <span class="nav-text">Reports</span>
+        </a>
+        <a href="/admin/intervention_outcomes" class="sidebar-link">
+          <i data-lucide="lightbulb" class="nav-icon"></i>
+          <span class="nav-text">Academic Insights</span>
+        </a>
+
+        <div class="nav-section-title">System</div>
+        <a href="/notices" class="sidebar-link {% if 'notices' in request.url.path %}active{% endif %}">
+          <i data-lucide="bell" class="nav-icon"></i>
+          <span class="nav-text">Notifications</span>
+        </a>
+        <a href="/admin/system_monitoring" class="sidebar-link {% if 'system_monitoring' in request.url.path %}active{% endif %}">
+          <i data-lucide="monitor" class="nav-icon"></i>
+          <span class="nav-text">System Monitoring</span>
+        </a>
+
+        {% else %}
+        <!-- ===== PUBLIC / GUEST NAVIGATION ===== -->
+        <div class="nav-section-title">Campus</div>
+        <a href="/" class="sidebar-link {% if request.url.path == '/' %}active{% endif %}">
+          <i data-lucide="home" class="nav-icon"></i>
+          <span class="nav-text">Home</span>
+        </a>
+        <a href="/explore" class="sidebar-link {% if 'explore' in request.url.path %}active{% endif %}">
+          <i data-lucide="search" class="nav-icon"></i>
+          <span class="nav-text">Explore</span>
+        </a>
+        <a href="/courses" class="sidebar-link {% if 'courses' in request.url.path %}active{% endif %}">
+          <i data-lucide="book-open" class="nav-icon"></i>
+          <span class="nav-text">Courses</span>
+        </a>
+        <a href="/departments" class="sidebar-link {% if 'departments' in request.url.path %}active{% endif %}">
+          <i data-lucide="building-2" class="nav-icon"></i>
+          <span class="nav-text">Departments</span>
+        </a>
+        <a href="/events" class="sidebar-link {% if 'events' in request.url.path %}active{% endif %}">
+          <i data-lucide="calendar-days" class="nav-icon"></i>
+          <span class="nav-text">Events</span>
+        </a>
+        <a href="/notices" class="sidebar-link {% if 'notices' in request.url.path %}active{% endif %}">
+          <i data-lucide="bell" class="nav-icon"></i>
+          <span class="nav-text">Notices</span>
+        </a>
+
+        <div class="nav-section-title">Services</div>
+        <a href="/contact" class="sidebar-link {% if 'contact' in request.url.path %}active{% endif %}">
+          <i data-lucide="circle-help" class="nav-icon"></i>
+          <span class="nav-text">Help &amp; Support</span>
+        </a>
+        {% endif %}
+
+      </nav>
+
+      <!-- ACCOUNT -->
+      <div class="sidebar-account">
+        {% if user %}
+        <div class="sidebar-account-info">
+          <img src="{{ user.avatar }}" alt="Profile" class="account-avatar">
+          <div class="account-details">
+            <div class="account-name">{{ user.name }}</div>
+            <div class="account-meta">{{ user.department_name | default(user.role | capitalize) }}</div>
+          </div>
+        </div>
+        <div class="sidebar-account-actions">
+          <a href="{% if user.role == 'hod' %}/faculty/profile{% else %}/{{ user.role }}/profile{% endif %}" class="sidebar-link">
+            <i data-lucide="user" class="nav-icon"></i>
+            <span class="nav-text">Profile</span>
+          </a>
+          <a href="/settings" class="sidebar-link">
+            <i data-lucide="settings" class="nav-icon"></i>
+            <span class="nav-text">Settings</span>
+          </a>
+          <a href="/logout" class="sidebar-link">
+            <i data-lucide="log-out" class="nav-icon"></i>
+            <span class="nav-text">Sign Out</span>
+          </a>
+        </div>
+        {% else %}
+        <div class="sidebar-account-guest">
+          <div class="nav-section-title" style="padding-top: 0;">Account</div>
+          <a href="/login" class="sidebar-link">
+            <i data-lucide="log-in" class="nav-icon"></i>
+            <span class="nav-text">Sign in</span>
+          </a>
+          <a href="/register" class="sidebar-link">
+            <i data-lucide="user-plus" class="nav-icon"></i>
+            <span class="nav-text">Create account</span>
+          </a>
+        </div>
+        {% endif %}
+      </div>
+
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+      <!-- Official Translucent Top Header -->
+      <header class="top-header">
+        <div style="display: flex; align-items: center; gap: 1.5rem;">
+          <!-- Mobile Menu Button -->
+          <button class="mobile-menu-btn" id="mobileMenuBtn" style="display: none;">
+            <i data-lucide="menu" style="width: 20px; height: 20px; stroke-width: 1.7;"></i>
+          </button>
+
+          <!-- Breadcrumb / Page Context -->
+          <nav style="display: flex; align-items: center; gap: 1.25rem;">
+            <a href="/explore" style="color: var(--text-secondary); font-weight: 500; font-size: 0.875rem;">Explore</a>
+            <a href="/courses" style="color: var(--text-secondary); font-weight: 500; font-size: 0.875rem;">Academics</a>
+            <a href="/departments" style="color: var(--text-secondary); font-weight: 500; font-size: 0.875rem;">Campus</a>
+            <a href="/events" style="color: var(--text-secondary); font-weight: 500; font-size: 0.875rem;">Events</a>
+            <a href="/notices" style="color: var(--text-secondary); font-weight: 500; font-size: 0.875rem;">Notices</a>
+          </nav>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <!-- Command Search Trigger (Ctrl+K) -->
+          <div class="cmd-search-trigger" id="cmdSearchTriggerBtn">
+            <span style="display: flex; align-items: center; gap: 0.5rem;">
+              <i data-lucide="search" style="width: 14px; height: 14px; stroke-width: 1.7; color: var(--text-muted);"></i>
+              <span>Search courses, events, notices...</span>
+            </span>
+            <span class="kbd-shortcut">Ctrl K</span>
+          </div>
+
+          <!-- Notification Bell -->
+          <div style="position: relative;">
+            <button id="notificationBellBtn" style="background: transparent; border: none; cursor: pointer; position: relative; display: flex; align-items: center; padding: 6px;">
+              <i data-lucide="bell" style="width: 18px; height: 18px; stroke-width: 1.7; color: var(--text-secondary);"></i>
+              <span style="position: absolute; top: 4px; right: 4px; width: 6px; height: 6px; background: var(--primary-burgundy); border-radius: 50%;"></span>
+            </button>
+            <div id="notificationDropdown" style="display: none; position: absolute; right: 0; top: 40px; width: 310px; background: var(--surface-white); border: 1px solid var(--border-subtle); border-radius: 10px; box-shadow: var(--shadow-lg); padding: 1.15rem; z-index: 150;">
+              <strong style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 0.65rem;">Notifications</strong>
+              <div style="font-size: 0.85rem; color: var(--text-secondary); border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
+                End Semester Examination Schedule released.
+              </div>
+              <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                AI Assignment submission due Friday 11:59 PM.
+              </div>
+            </div>
+          </div>
+
+          {% if user %}
+            <div style="text-align: right;">
+              <strong style="display: block; font-size: 0.875rem; color: var(--text-primary);">{{ user.name }}</strong>
+              <span class="badge badge-info" style="font-size: 0.7rem;">{{ user.role | capitalize }}</span>
+            </div>
+            <a href="/logout" class="btn-outline" style="font-size: 0.8rem; padding: 0.3rem 0.7rem;">Sign Out</a>
+          {% else %}
+            <a href="/login" class="btn-primary" style="font-size: 0.8125rem; padding: 0.35rem 0.85rem;">Sign In</a>
+          {% endif %}
+        </div>
+      </header>
+
+      <!-- Dynamic Page Body -->
+      <div class="page-container fade-in-section">
+        {% block content %}{% endblock %}
+      </div>
+
+      <!-- Compact Official Footer -->
+      <footer style="background: var(--surface-white); border-top: 1px solid var(--border-subtle); padding: 3rem 2rem 2rem 2rem; margin-top: 4rem;">
+        <div style="max-width: 1380px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 2.5rem; margin-bottom: 2rem;">
+          <div>
+            <h3 style="font-size: 1.15rem; color: var(--text-primary); margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.5rem;">
+              <i data-lucide="landmark" style="width: 18px; height: 18px; stroke-width: 1.7; color: var(--primary-burgundy);"></i>
+              PORTALITICS
+            </h3>
+            <p style="font-size: 0.875rem; color: var(--text-muted); max-width: 360px;">
+              Your Digital Campus, Unified. One official platform for students, faculty and academic administration.
+            </p>
+          </div>
+
+          <div>
+            <h4 style="color: var(--text-primary); font-size: 0.75rem; margin-bottom: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700;">Quick Links</h4>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.45rem; font-size: 0.875rem;">
+              <li><a href="/explore" style="color: var(--text-secondary);">Explore Campus</a></li>
+              <li><a href="/courses" style="color: var(--text-secondary);">Course Catalog</a></li>
+              <li><a href="/events" style="color: var(--text-secondary);">Campus Events</a></li>
+              <li><a href="/notices" style="color: var(--text-secondary);">Official Notices</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 style="color: var(--text-primary); font-size: 0.75rem; margin-bottom: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700;">Institutional</h4>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.45rem; font-size: 0.875rem;">
+              <li><a href="/departments" style="color: var(--text-secondary);">Departments</a></li>
+              <li><a href="/contact" style="color: var(--text-secondary);">Help &amp; Support</a></li>
+              <li><a href="/login" style="color: var(--text-secondary);">Portal Sign In</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div style="border-top: 1px solid var(--border-subtle); padding-top: 1.25rem; text-align: center; font-size: 0.8rem; color: var(--text-muted);">
+          &copy; 2026 PORTALITICS Digital Campus Platform. All rights reserved.
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Navigation -->
+  <nav class="mobile-bottom-nav" id="mobileBottomNav">
+    {% if user and user.role == 'student' %}
+    <a href="/student/dashboard" class="mobile-nav-item {% if 'dashboard' in request.url.path %}active{% endif %}">
+      <i data-lucide="layout-dashboard" class="nav-icon"></i>
+      <span>Home</span>
+    </a>
+    <a href="/student/courses" class="mobile-nav-item {% if 'courses' in request.url.path %}active{% endif %}">
+      <i data-lucide="book-open" class="nav-icon"></i>
+      <span>Courses</span>
+    </a>
+    <a href="/student/attendance" class="mobile-nav-item {% if 'attendance' in request.url.path %}active{% endif %}">
+      <i data-lucide="calendar-check" class="nav-icon"></i>
+      <span>Attendance</span>
+    </a>
+    <a href="/notices" class="mobile-nav-item {% if 'notices' in request.url.path %}active{% endif %}">
+      <i data-lucide="bell" class="nav-icon"></i>
+      <span>Notices</span>
+    </a>
+    <a href="/student/profile" class="mobile-nav-item {% if 'profile' in request.url.path %}active{% endif %}">
+      <i data-lucide="user" class="nav-icon"></i>
+      <span>More</span>
+    </a>
+    {% elif user and user.role == 'teacher' %}
+    <a href="/teacher/dashboard" class="mobile-nav-item {% if 'dashboard' in request.url.path %}active{% endif %}">
+      <i data-lucide="layout-dashboard" class="nav-icon"></i>
+      <span>Home</span>
+    </a>
+    <a href="/teacher/classes" class="mobile-nav-item {% if 'classes' in request.url.path %}active{% endif %}">
+      <i data-lucide="presentation" class="nav-icon"></i>
+      <span>Classes</span>
+    </a>
+    <a href="/teacher/students" class="mobile-nav-item {% if 'students' in request.url.path %}active{% endif %}">
+      <i data-lucide="users" class="nav-icon"></i>
+      <span>Students</span>
+    </a>
+    <a href="/notices" class="mobile-nav-item {% if 'notices' in request.url.path %}active{% endif %}">
+      <i data-lucide="bell" class="nav-icon"></i>
+      <span>Notices</span>
+    </a>
+    <a href="/teacher/intervention_queue" class="mobile-nav-item {% if 'intervention' in request.url.path %}active{% endif %}">
+      <i data-lucide="bar-chart-3" class="nav-icon"></i>
+      <span>More</span>
+    </a>
+    {% elif user and user.role == 'admin' %}
+    <a href="/admin/dashboard" class="mobile-nav-item {% if 'dashboard' in request.url.path %}active{% endif %}">
+      <i data-lucide="layout-dashboard" class="nav-icon"></i>
+      <span>Home</span>
+    </a>
+    <a href="/admin/students" class="mobile-nav-item {% if 'students' in request.url.path %}active{% endif %}">
+      <i data-lucide="users" class="nav-icon"></i>
+      <span>Students</span>
+    </a>
+    <a href="/admin/analytics" class="mobile-nav-item {% if 'analytics' in request.url.path %}active{% endif %}">
+      <i data-lucide="trending-up" class="nav-icon"></i>
+      <span>Analytics</span>
+    </a>
+    <a href="/notices" class="mobile-nav-item {% if 'notices' in request.url.path %}active{% endif %}">
+      <i data-lucide="bell" class="nav-icon"></i>
+      <span>Notices</span>
+    </a>
+    <a href="/admin/system_monitoring" class="mobile-nav-item {% if 'system_monitoring' in request.url.path %}active{% endif %}">
+      <i data-lucide="monitor" class="nav-icon"></i>
+      <span>More</span>
+    </a>
+    {% else %}
+    <a href="/" class="mobile-nav-item {% if request.url.path == '/' %}active{% endif %}">
+      <i data-lucide="home" class="nav-icon"></i>
+      <span>Home</span>
+    </a>
+    <a href="/courses" class="mobile-nav-item {% if 'courses' in request.url.path %}active{% endif %}">
+      <i data-lucide="book-open" class="nav-icon"></i>
+      <span>Courses</span>
+    </a>
+    <a href="/events" class="mobile-nav-item {% if 'events' in request.url.path %}active{% endif %}">
+      <i data-lucide="calendar-days" class="nav-icon"></i>
+      <span>Events</span>
+    </a>
+    <a href="/notices" class="mobile-nav-item {% if 'notices' in request.url.path %}active{% endif %}">
+      <i data-lucide="bell" class="nav-icon"></i>
+      <span>Notices</span>
+    </a>
+    <a href="/login" class="mobile-nav-item">
+      <i data-lucide="log-in" class="nav-icon"></i>
+      <span>Sign In</span>
+    </a>
+    {% endif %}
+  </nav>
+
+  <!-- Global Command Palette Modal Overlay (Ctrl+K) -->
+  <div class="cmd-palette-overlay" id="commandPaletteModal">
+    <div class="cmd-palette-box">
+      <input type="text" id="cmdPaletteInput" placeholder="Search courses, faculty, events, notices..." class="cmd-input">
+      <div style="padding: 1rem 1.25rem; font-size: 0.85rem; color: var(--text-muted);">
+        <strong style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 0.65rem; color: var(--sidebar-section-label);">Quick Navigation</strong>
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+          <a href="/explore" style="color: var(--text-secondary); display: flex; align-items: center; gap: 0.5rem;">
+            <i data-lucide="search" style="width: 14px; height: 14px; stroke-width: 1.7;"></i> Explore Campus
+          </a>
+          <a href="/courses" style="color: var(--text-secondary); display: flex; align-items: center; gap: 0.5rem;">
+            <i data-lucide="book-open" style="width: 14px; height: 14px; stroke-width: 1.7;"></i> Courses Directory
+          </a>
+          <a href="/departments" style="color: var(--text-secondary); display: flex; align-items: center; gap: 0.5rem;">
+            <i data-lucide="building-2" style="width: 14px; height: 14px; stroke-width: 1.7;"></i> Departments
+          </a>
+          <a href="/events" style="color: var(--text-secondary); display: flex; align-items: center; gap: 0.5rem;">
+            <i data-lucide="calendar-days" style="width: 14px; height: 14px; stroke-width: 1.7;"></i> Campus Events
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive [Why am I seeing this?] Evidence Drawer Modal -->
+  <div class="cmd-palette-overlay" id="evidenceDrawer" style="align-items: center;">
+    <div class="cmd-palette-box" style="width: 520px; padding: 1.75rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.85rem; margin-bottom: 1.15rem;">
+        <h3 style="color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+          <i data-lucide="info" style="width: 18px; height: 18px; stroke-width: 1.7; color: var(--primary-burgundy);"></i>
+          Why am I seeing this insight?
+        </h3>
+        <button id="closeDrawerBtn" style="background: transparent; border: none; cursor: pointer; color: var(--text-muted); display: flex; align-items: center;">
+          <i data-lucide="x" style="width: 18px; height: 18px; stroke-width: 1.7;"></i>
+        </button>
+      </div>
+
+      <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.15rem;">
+        Portalitics Academic Insights evaluate verified student academic records from MongoDB without exposing technical algorithms.
+      </p>
+
+      <div style="background: var(--bg-soft-gray); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 1.15rem; margin-bottom: 1.25rem;">
+        <strong style="font-size: 0.7rem; color: var(--primary-burgundy); text-transform: uppercase; display: block; margin-bottom: 0.65rem; letter-spacing: 0.1em;">Evaluated Signals</strong>
+        <ul style="list-style: none; font-size: 0.875rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 0.5rem;">
+          <li>&bull; <strong style="color: var(--text-primary);">Class Attendance:</strong> 72.0% (Threshold: 75.0%)</li>
+          <li>&bull; <strong style="color: var(--text-primary);">Assessment Trend:</strong> 78 &rarr; 64 &rarr; 55 in Mathematics</li>
+          <li>&bull; <strong style="color: var(--text-primary);">Coursework Status:</strong> 1 Homework submission marked late</li>
+          <li>&bull; <strong style="color: var(--text-primary);">Historical CGPA:</strong> 8.4 Cumulative Standing</li>
+        </ul>
+      </div>
+
+      <div style="border-top: 1px solid var(--border-subtle); padding-top: 1rem;">
+        <strong style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem; text-transform: uppercase; letter-spacing: 0.08em;">Action Recommended</strong>
+        <p style="font-size: 0.9rem; color: var(--text-primary); font-weight: 600;">
+          Consider meeting your faculty mentor and revising Unit IV concept proofs.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/main.js"></script>
+  <script src="/static/js/charts.js"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
